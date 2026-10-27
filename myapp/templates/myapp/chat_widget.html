@@ -1,0 +1,110 @@
+<section class="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3" aria-label="Support assistant">
+    <div id="assistantPanel" class="hidden w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-violet-400/40 bg-zinc-950 shadow-2xl shadow-violet-950/40">
+        <div class="flex items-center justify-between border-b border-white/10 px-4 py-3">
+            <div>
+                <h2 class="font-bold text-white">Excuse Assistant</h2>
+                <p class="text-xs text-zinc-400">FAQs, error codes, and support</p>
+            </div>
+            <button type="button" class="focus-ring rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/10" onclick="toggleAssistant(false)" aria-label="Close assistant">Close</button>
+        </div>
+        <div id="assistantMessages" class="flex max-h-72 min-h-32 flex-col gap-3 overflow-y-auto p-4" aria-live="polite">
+            <p class="max-w-[90%] self-start rounded-xl bg-zinc-800 px-3 py-2 text-sm text-zinc-100">Hi! Ask me about the generator, FAQs, or an error code such as 404.</p>
+        </div>
+        <form id="assistantForm" class="flex gap-2 border-t border-white/10 p-3">
+            <label class="sr-only" for="assistantInput">Your question</label>
+            <input id="assistantInput" maxlength="2000" required class="focus-ring min-w-0 flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white placeholder-zinc-500" placeholder="Ask a question...">
+            <button class="focus-ring rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-500" type="submit">Send</button>
+        </form>
+    </div>
+    <button id="assistantToggle" class="focus-ring flex items-center gap-2 rounded-full bg-violet-600 px-5 py-3 font-bold text-white shadow-lg shadow-violet-950/50 hover:bg-violet-500" type="button" onclick="toggleAssistant()" aria-expanded="false">
+        <i class="fa-solid fa-message" aria-hidden="true"></i><span>Ask assistant</span>
+    </button>
+</section>
+<script>
+    let assistantConversationId = null;
+
+    function toggleAssistant(forceOpen) {
+        const panel = document.getElementById('assistantPanel');
+        const toggle = document.getElementById('assistantToggle');
+        const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : panel.classList.contains('hidden');
+        panel.classList.toggle('hidden', !shouldOpen);
+        toggle.setAttribute('aria-expanded', String(shouldOpen));
+        if (shouldOpen) document.getElementById('assistantInput').focus();
+    }
+
+    function openAssistant(question) {
+        toggleAssistant(true);
+        if (question) {
+            const input = document.getElementById('assistantInput');
+            input.value = question;
+            input.focus();
+        }
+    }
+
+    function addAssistantMessage(text, isUser) {
+        const messages = document.getElementById('assistantMessages');
+        const message = document.createElement('p');
+        message.className = isUser
+            ? 'max-w-[90%] self-end rounded-xl bg-violet-700 px-3 py-2 text-sm text-white'
+            : 'max-w-[90%] self-start whitespace-pre-wrap rounded-xl bg-zinc-800 px-3 py-2 text-sm text-zinc-100';
+        message.textContent = text;
+        messages.appendChild(message);
+        messages.scrollTop = messages.scrollHeight;
+        return messages;
+    }
+
+    document.getElementById('assistantForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const input = document.getElementById('assistantInput');
+        const question = input.value.trim();
+        if (!question) return;
+        input.value = '';
+        const messages = addAssistantMessage(question, true);
+        const pending = addAssistantMessage('Checking the FAQ and error-code guide…', false);
+        const sendButton = event.currentTarget.querySelector('button[type="submit"]');
+        sendButton.disabled = true;
+        try {
+            const token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const response = await fetch('/api/assistant/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': token },
+                body: JSON.stringify({ question, conversation_id: assistantConversationId })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'The assistant is unavailable.');
+            assistantConversationId = result.conversation_id;
+            pending.textContent = result.answer;
+            const actions = document.createElement('div');
+            actions.className = 'mt-2 flex gap-2';
+            for (const [label, helpful] of [['Helpful', true], ['Not helpful', false]]) {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'rounded-md border border-zinc-600 px-2 py-1 text-xs text-zinc-300 hover:bg-zinc-700';
+                button.textContent = label;
+                button.addEventListener('click', async () => {
+                    button.disabled = true;
+                    try {
+                        const feedback = await fetch('/api/assistant/feedback/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': token },
+                            body: JSON.stringify({ conversation_id: assistantConversationId, helpful })
+                        });
+                        if (!feedback.ok) throw new Error('Feedback storage is unavailable.');
+                        button.textContent = 'Thanks!';
+                    } catch (error) {
+                        button.disabled = false;
+                        addAssistantMessage(error.message, false);
+                    }
+                });
+                actions.appendChild(button);
+            }
+            pending.appendChild(actions);
+            messages.scrollTop = messages.scrollHeight;
+        } catch (error) {
+            pending.textContent = error.message;
+        } finally {
+            sendButton.disabled = false;
+            input.focus();
+        }
+    });
+</script>

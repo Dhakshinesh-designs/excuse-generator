@@ -1,0 +1,13 @@
+{% extends "myapp/site_base.html" %}
+{% block title %}500 Server error | Sicko-Excuse{% endblock %}
+{% block content %}
+<section class="mx-auto max-w-2xl rounded-3xl border border-amber-400/20 bg-glass p-8 text-center sm:p-12">
+    <p class="font-mono text-6xl font-black text-amber-300">500</p>
+    <h1 class="mt-3 text-3xl font-black text-white">Something went wrong on our side.</h1>
+    <p class="mt-3 text-zinc-300">The request could not be completed. Please try again in a moment.</p>
+    <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a href="{% url 'index' %}" class="focus-ring rounded-xl bg-violet-600 px-5 py-3 font-bold text-white hover:bg-violet-500">Back to generator</a>
+        <button type="button" onclick="openAssistant('I got a 500 server error. What can I do?')" class="focus-ring rounded-xl border border-cyan-300/40 px-5 py-3 font-bold text-cyan-100 hover:bg-cyan-950/40">Ask the assistant</button>
+    </div>
+</section>
+{% endblock %}

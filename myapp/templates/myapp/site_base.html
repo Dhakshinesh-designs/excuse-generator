@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Excuse Generator help, frequently asked questions, and error-code guide.">
+    <link rel="icon" type="image/svg+xml" href="{% static 'myapp/favicon.svg' %}">
+    <title>{% block title %}Sicko-Excuse{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: Inter, sans-serif; background: #09090b; color: #f4f4f5; }
+        .bg-glass { background: rgba(18, 18, 22, .82); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.08); }
+        .text-gradient { background: linear-gradient(135deg,#ec4899,#8b5cf6 50%,#06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .focus-ring:focus-visible { outline: 2px solid #06b6d4; outline-offset: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <form id="siteCsrfForm" class="hidden">{% csrf_token %}</form>
+    {% include "myapp/site_nav.html" %}
+    <main class="flex-1 w-full max-w-5xl mx-auto px-4 py-8 sm:px-6">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="border-t border-white/10 bg-glass px-4 py-6 text-center text-xs text-zinc-500">
+        <p>SICKO-EXCUSE // Support and assessment project</p>
+        <a class="focus-ring mt-2 inline-block text-neonCyan hover:text-white" href="{% url 'health' %}">Service health</a>
+    </footer>
+    {% include "myapp/chat_widget.html" %}
+</body>
+</html>

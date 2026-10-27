@@ -1,0 +1,22 @@
+{% extends "myapp/site_base.html" %}
+{% block title %}Error code guide | Sicko-Excuse{% endblock %}
+{% block content %}
+<section class="mb-8 text-center">
+    <p class="font-mono text-sm uppercase tracking-widest text-pink-300">Troubleshooting</p>
+    <h1 class="mt-2 text-4xl font-black text-white sm:text-5xl">Error code <span class="text-gradient">guide</span></h1>
+    <p class="mx-auto mt-3 max-w-2xl text-zinc-400">Look up common HTTP errors and the site-specific generator error.</p>
+</section>
+<section class="grid gap-4 md:grid-cols-2" aria-label="Error codes">
+    {% for error in error_codes %}
+    <article id="code-{{ error.code }}" class="rounded-2xl border border-white/10 bg-glass p-5">
+        <p class="font-mono text-sm font-bold text-cyan-300">{{ error.code }}</p>
+        <h2 class="mt-1 text-xl font-bold text-white">{{ error.title }}</h2>
+        <p class="mt-3 text-zinc-300">{{ error.explanation }}</p>
+        <p class="mt-3 text-sm text-zinc-400"><strong class="text-zinc-200">Try this:</strong> {{ error.suggested_action }}</p>
+        <button class="focus-ring mt-4 rounded-lg border border-violet-400/40 px-3 py-2 text-sm text-violet-200 hover:bg-violet-900/40" type="button" onclick="openAssistant('Explain error code {{ error.code }}')">Ask the assistant</button>
+    </article>
+    {% empty %}
+    <p class="text-amber-100">Error codes have not been seeded. Run <code>python manage.py migrate</code>.</p>
+    {% endfor %}
+</section>
+{% endblock %}

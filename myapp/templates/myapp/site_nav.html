@@ -1,0 +1,11 @@
+<header class="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/90 backdrop-blur">
+    <nav aria-label="Main navigation" class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+        <a href="{% url 'index' %}" class="focus-ring text-lg font-black tracking-wide text-gradient">SICKO-EXCUSE</a>
+        <div class="flex flex-wrap items-center gap-2 text-sm">
+            <a class="focus-ring rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/10 hover:text-white" href="{% url 'index' %}">Generator</a>
+            <a class="focus-ring rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/10 hover:text-white" href="{% url 'faq' %}">FAQs</a>
+            <a class="focus-ring rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/10 hover:text-white" href="{% url 'errors' %}">Error codes</a>
+            <a class="focus-ring rounded-lg px-3 py-2 text-zinc-300 hover:bg-white/10 hover:text-white" href="{% url 'about' %}">About</a>
+        </div>
+    </nav>
+</header>
