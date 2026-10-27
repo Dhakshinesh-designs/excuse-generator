@@ -1,14 +1,41 @@
 {% extends "myapp/site_base.html" %}
 {% block title %}About | Sicko-Excuse{% endblock %}
 {% block content %}
-<section class="mx-auto max-w-3xl rounded-3xl border border-white/10 bg-glass p-6 sm:p-10">
-    <p class="font-mono text-sm uppercase tracking-widest text-cyan-300">Project overview</p>
-    <h1 class="mt-2 text-4xl font-black text-white">Excuse Generator <span class="text-gradient">support hub</span></h1>
-    <p class="mt-5 leading-relaxed text-zinc-300">This responsive project pairs a playful excuse generator with a database-backed help center. The assistant looks up FAQs and error codes, can use Gemini when configured, and opens a support ticket when it cannot find an answer.</p>
-    <div class="mt-7 grid gap-4 sm:grid-cols-2">
-        <a href="{% url 'faq' %}" class="focus-ring rounded-2xl border border-white/10 bg-zinc-950/60 p-5 hover:border-cyan-400/50"><h2 class="font-bold text-white">FAQ help</h2><p class="mt-2 text-sm text-zinc-400">Browse answers stored in SQL.</p></a>
-        <a href="{% url 'errors' %}" class="focus-ring rounded-2xl border border-white/10 bg-zinc-950/60 p-5 hover:border-pink-400/50"><h2 class="font-bold text-white">Error code guide</h2><p class="mt-2 text-sm text-zinc-400">Understand HTTP and generator errors.</p></a>
+<header class="page-hero">
+    <p class="page-eyebrow">A little about this project</p>
+    <h1 class="page-title">Made to help.<br><span class="text-gradient">Built to be useful.</span></h1>
+    <p class="page-description">A playful excuse generator with a real support hub when you need answers.</p>
+</header>
+<section class="about-intro content-panel">
+    <div class="about-intro-mark" aria-hidden="true">✦</div>
+    <div>
+        <p class="page-eyebrow">The project</p>
+        <h2>Excuse Generator <span class="text-gradient">support hub</span></h2>
+        <p class="about-copy">This responsive project pairs a playful excuse generator with a database-backed help center. The assistant looks up FAQs and error codes, can use Gemini when configured, and opens a support ticket when it cannot find an answer.</p>
     </div>
-    <p class="mt-6 text-sm text-zinc-400">Request logs are sent to the application console. Chat transcripts and feedback are written to MongoDB when it is configured. The health endpoint is <a class="text-cyan-300 underline" href="{% url 'health' %}">/health/</a>.</p>
 </section>
+<section class="about-grid" aria-label="Explore the support hub">
+    <a href="{% url 'faq' %}" class="about-card content-panel focus-ring">
+        <span class="about-card-icon" aria-hidden="true">?</span>
+        <span class="about-card-kicker">Find an answer</span>
+        <h2>Frequently asked questions</h2>
+        <p>Browse answers maintained in the SQL database.</p>
+        <span class="about-card-link">Browse FAQs <span aria-hidden="true">→</span></span>
+    </a>
+    <a href="{% url 'errors' %}" class="about-card content-panel focus-ring">
+        <span class="about-card-icon" aria-hidden="true">!</span>
+        <span class="about-card-kicker">Fix an issue</span>
+        <h2>Error code guide</h2>
+        <p>Understand common HTTP errors and generator-specific codes.</p>
+        <span class="about-card-link">Explore error codes <span aria-hidden="true">→</span></span>
+    </a>
+    <a href="{% url 'health' %}" class="about-card content-panel focus-ring">
+        <span class="about-card-icon" aria-hidden="true">↗</span>
+        <span class="about-card-kicker">Check the service</span>
+        <h2>Service health</h2>
+        <p>See the health check for the application and its services.</p>
+        <span class="about-card-link">View service health <span aria-hidden="true">→</span></span>
+    </a>
+</section>
+<p class="about-footnote">Request logs are sent to the application console. Chat transcripts and feedback are written to MongoDB when it is configured.</p>
 {% endblock %}
