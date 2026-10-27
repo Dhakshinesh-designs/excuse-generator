@@ -1,1 +1,625 @@
-{% load static %}\n<!DOCTYPE html>\n<html lang="en" class="dark">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <link rel="icon" type="image/svg+xml" href="{% static 'myapp/favicon.svg' %}">\n    <title>SICKO-EXCUSE™ // Ultimate Gen-Z Alibi Engine</title>\n    <!-- Tailwind CSS CDN -->\n    <script src="https://cdn.tailwindcss.com"></script>\n    <script>\n        tailwind.config = {\n            darkMode: 'class',\n            theme: {\n                extend: {\n                    colors: {\n                        neonViolet: '#8b5cf6',\n                        neonCyan: '#06b6d4',\n                        limeGreen: '#10b981',\n                        hotPink: '#ec4899',\n                        darkBg: '#09090b',\n                        cardDark: '#121216'\n                    },\n                    fontFamily: {\n                        sans: ['Inter', 'sans-serif'],\n                        mono: ['JetBrains Mono', 'monospace']\n                    }\n                }\n            }\n        }\n    </script>\n    <!-- Google Fonts -->\n    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">\n    <!-- FontAwesome Icons -->\n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">\n    <style>\n        html { overflow-x: clip; }\n        body {\n            font-family: 'Inter', sans-serif;\n            background-color: #09090b;\n            color: #f4f4f5;\n            overflow-x: hidden;\n        }\n        .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.3); }\n        .glow-pink { box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); }\n        .glow-cyan { box-shadow: 0 0 25px rgba(6, 182, 212, 0.3); }\n        .text-gradient {\n            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);\n            -webkit-background-clip: text;\n            -webkit-text-fill-color: transparent;\n        }\n        .bg-glass {\n            background: rgba(18, 18, 22, 0.75);\n            backdrop-filter: blur(16px);\n            -webkit-backdrop-filter: blur(16px);\n            border: 1px solid rgba(255, 255, 255, 0.08);\n        }\n        @keyframes float {\n            0%, 100% { transform: translateY(0px) rotate(0deg); }\n            50% { transform: translateY(-10px) rotate(1deg); }\n        }\n        .floating-element {\n            animation: float 6s ease-in-out infinite;\n        }\n        @keyframes pulseGlow {\n            0%, 100% { opacity: 0.4; }\n            50% { opacity: 0.8; }\n        }\n        .bg-pulse-glow {\n            animation: pulseGlow 4s ease-in-out infinite;\n        }\n        /* Custom scrollbar */\n        ::-webkit-scrollbar { width: 6px; }\n        ::-webkit-scrollbar-track { background: #09090b; }\n        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }\n        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }\n    </style>\n</head>\n<body class="min-h-screen flex flex-col justify-between selection:bg-hotPink selection:text-white relative">\n    <form id="csrfForm" class="hidden">{% csrf_token %}</form>\n\n    <!-- Ambient Background Glows -->\n    <div class="absolute top-0 left-1/4 w-96 h-96 bg-neonViolet/20 rounded-full blur-[120px] pointer-events-none bg-pulse-glow"></div>\n    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-hotPink/15 rounded-full blur-[120px] pointer-events-none bg-pulse-glow" style="animation-delay: 2s;"></div>\n    <div class="absolute bottom-10 left-1/3 w-96 h-96 bg-neonCyan/15 rounded-full blur-[120px] pointer-events-none bg-pulse-glow" style="animation-delay: 1s;"></div>\n\n    <!-- Header / Navbar -->\n    <header class="w-full border-b border-white/10 bg-glass sticky top-0 z-50 px-6 py-4 flex items-center justify-between">\n        <div class="flex items-center space-x-3">\n            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-hotPink via-neonViolet to-neonCyan flex items-center justify-center shadow-lg glow-violet">\n                <i class="fa-solid fa-fire text-white text-lg"></i>\n            </div>\n            <div>\n                <span class="text-xl font-black tracking-wider text-gradient uppercase font-mono">SICKO-EXCUSE</span>\n                <span class="block text-[10px] text-zinc-400 font-mono tracking-widest">v4.0.2 // EXCUSE GENERATOR</span>\n            </div>\n        </div>\n\n        <div class="flex items-center space-x-3">\n            <button onclick="openVaultModal()" class="px-4 py-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 text-xs font-bold font-mono text-zinc-300 hover:text-white transition flex items-center space-x-2 shadow-sm">\n                <i class="fa-solid fa-vault text-neonCyan"></i>\n                <span>VAULT (<span id="vaultCount">0</span>)</span>\n            </button>\n            <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">\n                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>\n                <span>DJANGO API READY</span>\n            </div>\n        </div>\n    </header>\n    {% include "myapp/site_nav.html" %}\n\n    <!-- Main Content Container -->\n    <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-8 z-10">\n\n        <!-- Hero Intro -->\n        <div class="text-center mb-8">\n            <div class="inline-block mb-3 px-3.5 py-1 rounded-full bg-hotPink/10 border border-hotPink/30 text-hotPink text-xs font-bold tracking-widest uppercase font-mono">\n                ⚡ No Cap Alibi Generator\n            </div>\n            <h1 class="text-4xl sm:text-6xl font-black tracking-tight mb-3">\n                Never get caught lacking <span class="text-gradient">again.</span>\n            </h1>\n            <p class="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto">\n                Type your situation below, pick your vibe level, and let the excuse generator cook up a response.\n            </p>\n        </div>\n\n        <!-- Generator Card -->\n        <div class="bg-glass rounded-3xl p-6 sm:p-8 shadow-2xl glow-violet mb-8 relative border border-white/10">\n\n            <!-- Situation Input Section -->\n            <div class="mb-6">\n                <label class="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-300 mb-2 flex items-center justify-between">\n                    <span><i class="fa-solid fa-terminal text-neonCyan mr-2"></i>1. What's the situation? (Type your context)</span>\n                    <span class="text-[10px] text-zinc-500">Be as real or wild as you want</span>\n                </label>\n                <div class="relative">\n                    <input type="text" id="customSituation" placeholder="e.g. Missed 8 AM lecture, skipped family dinner, left on read for 6 hours..."\n                        class="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-neonViolet focus:ring-2 focus:ring-neonViolet/20 transition font-sans">\n                    <div class="absolute right-3 top-3.5 flex items-center space-x-1">\n                        <button onclick="insertPreset('Missed morning lecture')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Class</button>\n                        <button onclick="insertPreset('Skipped work shift')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Work</button>\n                        <button onclick="insertPreset('Ghosted group project')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Group</button>\n                    </div>\n                </div>\n            </div>\n\n            <!-- Intensity Level Selection -->\n            <div class="mb-6">\n                <label class="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-300 mb-2">\n                    <span class="text-hotPink"><i class="fa-solid fa-sliders mr-2"></i>2. Choose Vibe / Intensity Level</span>\n                </label>\n                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">\n                    <!-- Level 1 -->\n                    <button type="button" onclick="selectLevel('okish')" id="btn-okish"\n                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 hover:border-neonCyan/50 transition text-left flex flex-col justify-between">\n                        <div>\n                            <div class="flex items-center justify-between mb-1">\n                                <span class="font-bold text-sm text-zinc-200 group-hover:text-neonCyan transition">Okish 😌</span>\n                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400">Safe</span>\n                            </div>\n                            <p class="text-xs text-zinc-500">Believable everyday excuses. Low drama, high success rate.</p>\n                        </div>\n                        <div class="mt-3 flex items-center text-[10px] font-mono text-zinc-400 group-hover:text-neonCyan">\n                            <i class="fa-solid fa-circle-dot mr-1"></i><span>Classic & Casual</span>\n                        </div>\n                    </button>\n\n                    <!-- Level 2 -->\n                    <button type="button" onclick="selectLevel('fine')" id="btn-fine"\n                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 hover:border-hotPink/50 transition text-left flex flex-col justify-between">\n                        <div>\n                            <div class="flex items-center justify-between mb-1">\n                                <span class="font-bold text-sm text-zinc-200 group-hover:text-hotPink transition">Fine 🥶</span>\n                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-hotPink/10 text-hotPink">Smooth</span>\n                            </div>\n                            <p class="text-xs text-zinc-500">Clever, slightly dramatic, highly plausible alibis.</p>\n                        </div>\n                        <div class="mt-3 flex items-center text-[10px] font-mono text-zinc-400 group-hover:text-hotPink">\n                            <i class="fa-solid fa-circle-dot mr-1"></i><span>Main Character Energy</span>\n                        </div>\n                    </button>\n\n                    <!-- Level 3 -->\n                    <button type="button" onclick="selectLevel('master')" id="btn-master"\n                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonViolet/50 ring-2 ring-neonViolet/30 transition text-left flex flex-col justify-between">\n                        <div>\n                            <div class="flex items-center justify-between mb-1">\n                                <span class="font-bold text-sm text-white group-hover:text-neonViolet transition">Master Level 👑</span>\n                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neonViolet/20 text-neonViolet font-bold animate-pulse">UN-FAKEABLE</span>\n                            </div>\n                            <p class="text-xs text-zinc-400">Quantum-level physics & societal fabric distortions. Undeniable.</p>\n                        </div>\n                        <div class="mt-3 flex items-center text-[10px] font-mono text-neonViolet">\n                            <i class="fa-solid fa-fire mr-1"></i><span>God Tier Alibi</span>\n                        </div>\n                    </button>\n                </div>\n            </div>\n\n            <!-- Action Trigger Button -->\n            <button onclick="generateExcuse()" id="generateBtn"\n                class="w-full py-4 rounded-2xl bg-gradient-to-r from-hotPink via-neonViolet to-neonCyan text-white font-black text-sm tracking-widest uppercase shadow-lg glow-violet hover:opacity-95 transform active:scale-[0.99] transition flex items-center justify-center space-x-3 cursor-pointer">\n                <i class="fa-solid fa-wand-magic-sparkles text-lg animate-bounce"></i>\n                <span>GENERATE EXCUSE</span>\n            </button>\n        </div>\n\n        <!-- Output Result Card (Hidden Initially) -->\n        <div id="resultCard" class="hidden bg-glass rounded-3xl p-6 sm:p-8 shadow-2xl border border-neonViolet/30 glow-cyan relative mb-8 transition-all duration-300">\n            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">\n                <div class="flex items-center space-x-2">\n                    <span class="w-3 h-3 rounded-full bg-neonCyan animate-ping"></span>\n                    <span class="text-xs font-mono font-bold tracking-wider text-neonCyan uppercase">Generated Excuse Result</span>\n                </div>\n                <div class="flex items-center space-x-2">\n                    <span id="badgeLevel" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-neonViolet/20 text-neonViolet font-bold uppercase">MASTER LEVEL</span>\n                    <span id="badgeSource" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold uppercase">Django API</span>\n                </div>\n            </div>\n\n            <!-- Excuse Text Display -->\n            <div class="mb-6">\n                <p id="excuseOutputText" class="text-lg sm:text-xl font-medium text-zinc-100 font-sans leading-relaxed tracking-wide bg-zinc-950/60 p-5 rounded-2xl border border-white/5 shadow-inner">\n                    <!-- Dynamic excuse text -->\n                </p>\n            </div>\n\n            <!-- Action Toolbar inside Result -->\n            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">\n                <button onclick="copyExcuse()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">\n                    <i class="fa-regular fa-copy text-neonCyan"></i>\n                    <span id="copyBtnText">COPY</span>\n                </button>\n                <button onclick="saveToVault()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">\n                    <i class="fa-solid fa-bookmark text-hotPink"></i>\n                    <span>SAVE VAULT</span>\n                </button>\n                <button onclick="openFlexModal()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">\n                    <i class="fa-solid fa-mobile-screen text-neonViolet"></i>\n                    <span>FLEX TEXT</span>\n                </button>\n                <button onclick="generateExcuse()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">\n                    <i class="fa-solid fa-rotate text-emerald-400"></i>\n                    <span>RE-COOK</span>\n                </button>\n            </div>\n        </div>\n\n        <section class="mb-6 rounded-2xl border border-cyan-400/20 bg-glass p-5">\n            <div class="flex flex-wrap items-center justify-between gap-3">\n                <div>\n                    <h2 class="font-mono text-xs font-bold uppercase tracking-wider text-cyan-300">Excuse inspiration</h2>\n                    <p id="inspirationText" class="mt-2 text-sm text-zinc-300">Get a quick prompt from our inspiration service.</p>\n                    <p id="inspirationSource" class="mt-1 text-[10px] text-zinc-500"></p>\n                </div>\n                <button id="inspirationButton" type="button" class="rounded-xl border border-cyan-400/30 px-4 py-2 text-xs font-bold text-cyan-100 hover:bg-cyan-950/40">Get inspiration</button>\n            </div>\n        </section>\n\n        <!-- Hall of Fame / Trending Exuses Quick Ticker -->\n        <div class="bg-glass rounded-2xl p-5 border border-white/5">\n            <div class="flex items-center justify-between mb-3">\n                <span class="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400 flex items-center">\n                    <i class="fa-solid fa-fire-flame-curved text-hotPink mr-2"></i> Community Masterpieces\n                </span>\n                <span class="text-[10px] font-mono text-zinc-500">Quick Picks</span>\n            </div>\n            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">\n                <div onclick="useQuickExcuse('My smart toaster connected to the university subnet and initiated an emergency DDoS attack on Blackboard, so campus IT locked my MAC address.')"\n                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">\n                    "My smart toaster launched a DDoS attack on Blackboard..."\n                </div>\n                <div onclick="useQuickExcuse('I got legally trapped in a time dilation loop while attempting to cross the hallway during passing period.')"\n                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">\n                    "Trapped in a hallway time dilation loop..."\n                </div>\n                <div onclick="useQuickExcuse('A family of raccoons unionized inside my engine block and refused to let me turn the ignition until I signed their collective bargaining agreement.')"\n                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">\n                    "Raccoons unionized inside my engine block..."\n                </div>\n            </div>\n        </div>\n    </main>\n\n    <!-- Footer -->\n    <footer class="w-full border-t border-white/10 bg-glass py-6 px-6 text-center text-xs text-zinc-500 font-mono">\n        <p>SICKO-EXCUSE ENGINE © 2026 // POWERED BY DJANGO & GEN-Z PROTOCOL</p>\n        <p class="mt-2"><a class="text-cyan-300 hover:text-white" href="{% url 'health' %}">Service health</a></p>\n    </footer>\n\n    <!-- VAULT MODAL -->\n    <div id="vaultModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">\n        <div class="bg-zinc-950 border border-white/15 rounded-3xl max-w-lg w-full p-6 shadow-2xl max-h-[85vh] flex flex-col">\n            <div class="flex items-center justify-between pb-4 border-b border-white/10">\n                <div class="flex items-center space-x-2">\n                    <i class="fa-solid fa-vault text-neonCyan text-lg"></i>\n                    <h3 class="font-black text-white text-base tracking-wider uppercase font-mono">EXCUSE VAULT</h3>\n                </div>\n                <button onclick="closeVaultModal()" class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition">\n                    <i class="fa-solid fa-xmark"></i>\n                </button>\n            </div>\n\n            <div id="vaultList" class="flex-1 overflow-y-auto py-4 space-y-3">\n                <!-- Dynamically populated vault items -->\n            </div>\n\n            <div class="pt-4 border-t border-white/10 flex justify-between items-center">\n                <button onclick="clearVault()" class="text-xs font-mono text-rose-400 hover:text-rose-300 transition flex items-center space-x-1">\n                    <i class="fa-solid fa-trash mr-1"></i><span>Clear Vault</span>\n                </button>\n                <button onclick="closeVaultModal()" class="px-4 py-2 rounded-xl bg-neonViolet hover:bg-neonViolet/90 text-white font-bold text-xs font-mono transition">\n                    CLOSE\n                </button>\n            </div>\n        </div>\n    </div>\n\n    <!-- FLEX / MOCK TEXT MESSAGE PREVIEW MODAL -->\n    <div id="flexModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">\n        <div class="bg-zinc-950 border border-white/15 rounded-3xl max-w-md w-full p-6 shadow-2xl flex flex-col">\n            <div class="flex items-center justify-between pb-4 border-b border-white/10">\n                <div class="flex items-center space-x-2">\n                    <i class="fa-solid fa-mobile-screen text-hotPink text-lg"></i>\n                    <h3 class="font-black text-white text-base tracking-wider uppercase font-mono">GROUP CHAT FLEX PREVIEW</h3>\n                </div>\n                <button onclick="closeFlexModal()" class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition">\n                    <i class="fa-solid fa-xmark"></i>\n                </button>\n            </div>\n\n            <!-- Mock iPhone SMS Container -->\n            <div class="my-6 bg-zinc-900/60 p-4 rounded-2xl border border-white/10">\n                <div class="text-center text-[10px] font-mono text-zinc-500 mb-4">Today 9:41 AM</div>\n                <div class="flex flex-col space-y-3">\n                    <div class="self-start bg-zinc-800 text-zinc-300 text-xs px-3.5 py-2.5 rounded-2xl max-w-[80%] rounded-bl-sm font-sans">\n                        Yo where you at? Everyone is waiting.\n                    </div>\n                    <div id="flexMessageBubble" class="self-end bg-gradient-to-r from-hotPink to-neonViolet text-white text-xs px-4 py-3 rounded-2xl max-w-[85%] rounded-br-sm font-sans shadow-lg">\n                        <!-- Dynamic Excuse -->\n                    </div>\n                </div>\n            </div>\n\n            <button onclick="copyExcuse()" class="w-full py-3 rounded-xl bg-neonCyan hover:bg-neonCyan/90 text-zinc-950 font-black text-xs font-mono uppercase tracking-widest transition shadow-lg">\n                COPY FOR CHAT 💅\n            </button>\n        </div>\n    </div>\n\n    <!-- Toast Notification -->\n    <div id="toast" class="fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">\n        <i class="fa-solid fa-circle-check text-neonCyan text-lg"></i>\n        <span id="toastText" class="text-xs font-mono font-bold tracking-wide">Copied to clipboard! 💅</span>\n    </div>\n\n    <!-- JavaScript Application Logic -->\n    <script>\n        // State management\n        let currentLevel = 'master';\n        let currentExcuseText = '';\n        let excuseVault = JSON.parse(localStorage.getItem('sicko_excuse_vault') || '[]');\n\n        // Initialize Vault Count on Load\n        document.addEventListener('DOMContentLoaded', () => {\n            updateVaultCount();\n        });\n\n        // Set Intensity Level\n        function selectLevel(level) {\n            currentLevel = level;\n            document.querySelectorAll('.level-btn').forEach(btn => {\n                btn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 transition text-left flex flex-col justify-between";\n            });\n\n            const activeBtn = document.getElementById(`btn-${level}`);\n            if (level === 'okish') {\n                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonCyan/50 ring-2 ring-neonCyan/30 transition text-left flex flex-col justify-between";\n            } else if (level === 'fine') {\n                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-hotPink/50 ring-2 ring-hotPink/30 transition text-left flex flex-col justify-between";\n            } else if (level === 'master') {\n                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonViolet/50 ring-2 ring-neonViolet/30 transition text-left flex flex-col justify-between";\n            }\n        }\n\n        // Insert Quick Preset\n        function insertPreset(text) {\n            document.getElementById('customSituation').value = text;\n        }\n\n        function useQuickExcuse(text) {\n            document.getElementById('customSituation').value = text;\n            generateExcuse();\n        }\n\n        // Generate an excuse with the Django API and a local fallback.\n        async function generateExcuse() {\n            const situation = document.getElementById('customSituation').value.trim() || "Skipped obligation without warning";\n            const btn = document.getElementById('generateBtn');\n\n            // Button loading state\n            btn.disabled = true;\n            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-lg mr-2"></i><span>GENERATING EXCUSE...</span>`;\n\n            try {\n                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;\n                const response = await fetch('/api/generate/', {\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json',\n                        'X-CSRFToken': csrfToken\n                    },\n                    body: JSON.stringify({ situation, level: currentLevel })\n                });\n\n                if (!response.ok) {\n                    throw new Error(`Excuse API request failed: ${response.status}`);\n                }\n\n                const result = await response.json();\n                if (result.status !== 'success' || typeof result.excuse !== 'string') {\n                    throw new Error("Excuse API returned an invalid response.");\n                }\n\n                displayResult(result.excuse, "Django API");\n\n            } catch (error) {\n                console.warn("Using local fallback generator:", error);\n                const fallbackExcuse = getLocalFallback(situation, currentLevel);\n                displayResult(fallbackExcuse, "Local fallback");\n            } finally {\n                btn.disabled = false;\n                btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-lg animate-bounce"></i><span>GENERATE EXCUSE</span>`;\n            }\n        }\n\n        // Local Fallback Alibi Engine\n        function getLocalFallback(situation, level) {\n            const okishPool = [\n                `My alarm clock suffered a kernel panic right after the second snooze cycle regarding ${situation}.`,\n                `Traffic on the bridge was completely stalled due to a stray dog holding up rush hour for ${situation}.`,\n                `My Wi-Fi provider decided to execute an unscheduled firmware patch right when I needed to handle ${situation}.`\n            ];\n            const finePool = [\n                `I got unexpectedly roped into a neighborhood dispute over property lines right in the middle of ${situation}.`,\n                `My cat figured out how to lock the bedroom door from the outside, trapping me during ${situation}.`,\n                `I had to rush my roommate to urgent care because they tried to microwave metal spoons during ${situation}.`\n            ];\n            const masterPool = [\n                `A localized electromagnetic surge from a nearby amateur radio tower fried my phone's baseband processor during ${situation}.`,\n                `I was accidentally locked inside the municipal archives basement because the automated security locks triggered early regarding ${situation}.`,\n                `My smart home ecosystem registered a carbon monoxide false positive and sealed all exterior ventilation during ${situation}.`\n            ];\n\n            let pool = masterPool;\n            if (level === 'okish') pool = okishPool;\n            if (level === 'fine') pool = finePool;\n\n            return pool[Math.floor(Math.random() * pool.length)];\n        }\n\n        // Render Result to UI\n        function displayResult(text, source) {\n            currentExcuseText = text;\n            document.getElementById('excuseOutputText').innerText = `"${text}"`;\n\n            const badge = document.getElementById('badgeLevel');\n            badge.innerText = currentLevel.toUpperCase() + " LEVEL";\n\n            const sourceBadge = document.getElementById('badgeSource');\n            sourceBadge.innerText = source;\n\n            const card = document.getElementById('resultCard');\n            card.classList.remove('hidden');\n            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });\n        }\n\n        // Copy to Clipboard (using fallback execCommand for iFrame compatibility)\n        function copyExcuse() {\n            const textarea = document.createElement("textarea");\n            textarea.value = currentExcuseText;\n            document.body.appendChild(textarea);\n            textarea.select();\n            try {\n                document.execCommand('copy');\n                showToast("Copied to clipboard! 💅");\n            } catch (err) {\n                showToast("Failed to copy!", true);\n            }\n            document.body.removeChild(textarea);\n        }\n\n        // Toast Notification System\n        function showToast(message, isError = false) {\n            const toast = document.getElementById('toast');\n            const toastText = document.getElementById('toastText');\n            toastText.innerText = message;\n\n            if (isError) {\n                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-rose-500/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-0 opacity-100 transition-all duration-300 z-50";\n            } else {\n                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-0 opacity-100 transition-all duration-300 z-50";\n            }\n\n            setTimeout(() => {\n                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50";\n            }, 3000);\n        }\n\n        // Vault Management\n        function saveToVault() {\n            if (!currentExcuseText) return;\n            if (!excuseVault.includes(currentExcuseText)) {\n                excuseVault.unshift(currentExcuseText);\n                if (excuseVault.length > 20) excuseVault.pop(); // keep max 20\n                localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));\n                updateVaultCount();\n                showToast("Saved to your Excuse Vault! 👑");\n            } else {\n                showToast("Already saved in vault!");\n            }\n        }\n\n        function updateVaultCount() {\n            document.getElementById('vaultCount').innerText = excuseVault.length;\n        }\n\n        function openVaultModal() {\n            const listContainer = document.getElementById('vaultList');\n            listContainer.innerHTML = '';\n\n            if (excuseVault.length === 0) {\n                listContainer.innerHTML = `<div class="text-center py-8 text-zinc-500 font-mono text-xs">Your vault is currently empty. Save some master alibis!</div>`;\n            } else {\n                excuseVault.forEach((excuse, index) => {\n                    const item = document.createElement('div');\n                    item.className = "p-3 rounded-2xl bg-zinc-900/80 border border-white/5 flex items-center justify-between space-x-3";\n                    const excuseText = document.createElement('p');\n                    excuseText.className = "text-xs text-zinc-300 font-sans line-clamp-2";\n                    excuseText.textContent = `"${excuse}"`;\n\n                    const actions = document.createElement('div');\n                    actions.className = "flex items-center space-x-2 flex-shrink-0";\n\n                    const copyButton = document.createElement('button');\n                    copyButton.className = "p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs transition";\n                    copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';\n                    copyButton.addEventListener('click', async () => {\n                        try {\n                            await navigator.clipboard.writeText(excuse);\n                            showToast("Copied from vault!");\n                        } catch (error) {\n                            showToast("Failed to copy from vault.", true);\n                        }\n                    });\n\n                    const deleteButton = document.createElement('button');\n                    deleteButton.className = "p-2 rounded-xl bg-zinc-800 hover:bg-rose-900/50 text-zinc-400 hover:text-rose-400 text-xs transition";\n                    deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';\n                    deleteButton.addEventListener('click', () => deleteFromVault(index));\n\n                    actions.append(copyButton, deleteButton);\n                    item.append(excuseText, actions);\n                    listContainer.appendChild(item);\n                });\n            }\n\n            document.getElementById('vaultModal').classList.remove('hidden');\n        }\n\n        function closeVaultModal() {\n            document.getElementById('vaultModal').classList.add('hidden');\n        }\n\n        function deleteFromVault(index) {\n            excuseVault.splice(index, 1);\n            localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));\n            updateVaultCount();\n            openVaultModal();\n            showToast("Excuse removed from vault.");\n        }\n\n        function clearVault() {\n            excuseVault = [];\n            localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));\n            updateVaultCount();\n            openVaultModal();\n            showToast("Vault cleared.");\n        }\n\n        // Flex Mock SMS Modal\n        function openFlexModal() {\n            if (!currentExcuseText) return;\n            document.getElementById('flexMessageBubble').innerText = currentExcuseText;\n            document.getElementById('flexModal').classList.remove('hidden');\n        }\n\n        function closeFlexModal() {\n            document.getElementById('flexModal').classList.add('hidden');\n        }\n\n        document.getElementById('inspirationButton').addEventListener('click', async () => {\n            const button = document.getElementById('inspirationButton');\n            const text = document.getElementById('inspirationText');\n            const source = document.getElementById('inspirationSource');\n            button.disabled = true;\n            text.innerText = 'Finding inspiration...';\n            try {\n                const response = await fetch('/api/inspiration/');\n                if (!response.ok) throw new Error(`Inspiration request failed: ${response.status}`);\n                const result = await response.json();\n                text.innerText = result.text;\n                source.innerText = `Source: ${result.source}`;\n            } catch (error) {\n                text.innerText = 'Inspiration is unavailable right now. Try again shortly.';\n                source.innerText = '';\n            } finally {\n                button.disabled = false;\n            }\n        });\n    </script>\n    {% include "myapp/chat_widget.html" %}\n</body>\n</html>\n
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="{% static 'myapp/favicon.svg' %}">
+    <title>SICKO-EXCUSE™ // Ultimate Gen-Z Alibi Engine</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neonViolet: '#8b5cf6',
+                        neonCyan: '#06b6d4',
+                        limeGreen: '#10b981',
+                        hotPink: '#ec4899',
+                        darkBg: '#09090b',
+                        cardDark: '#121216'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html { overflow-x: clip; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+        .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.3); }
+        .glow-pink { box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); }
+        .glow-cyan { box-shadow: 0 0 25px rgba(6, 182, 212, 0.3); }
+        .text-gradient {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .bg-glass {
+            background: rgba(18, 18, 22, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        .bg-pulse-glow {
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-hotPink selection:text-white relative">
+    <form id="csrfForm" class="hidden">{% csrf_token %}</form>
+
+    <!-- Ambient Background Glows -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-neonViolet/20 rounded-full blur-[120px] pointer-events-none bg-pulse-glow"></div>
+    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-hotPink/15 rounded-full blur-[120px] pointer-events-none bg-pulse-glow" style="animation-delay: 2s;"></div>
+    <div class="absolute bottom-10 left-1/3 w-96 h-96 bg-neonCyan/15 rounded-full blur-[120px] pointer-events-none bg-pulse-glow" style="animation-delay: 1s;"></div>
+
+    <!-- Header / Navbar -->
+    <header class="w-full border-b border-white/10 bg-glass sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-hotPink via-neonViolet to-neonCyan flex items-center justify-center shadow-lg glow-violet">
+                <i class="fa-solid fa-fire text-white text-lg"></i>
+            </div>
+            <div>
+                <span class="text-xl font-black tracking-wider text-gradient uppercase font-mono">SICKO-EXCUSE</span>
+                <span class="block text-[10px] text-zinc-400 font-mono tracking-widest">v4.0.2 // EXCUSE GENERATOR</span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <button onclick="openVaultModal()" class="px-4 py-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 text-xs font-bold font-mono text-zinc-300 hover:text-white transition flex items-center space-x-2 shadow-sm">
+                <i class="fa-solid fa-vault text-neonCyan"></i>
+                <span>VAULT (<span id="vaultCount">0</span>)</span>
+            </button>
+            <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>DJANGO API READY</span>
+            </div>
+        </div>
+    </header>
+    {% include "myapp/site_nav.html" %}
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-8 z-10">
+
+        <!-- Hero Intro -->
+        <div class="text-center mb-8">
+            <div class="inline-block mb-3 px-3.5 py-1 rounded-full bg-hotPink/10 border border-hotPink/30 text-hotPink text-xs font-bold tracking-widest uppercase font-mono">
+                ⚡ No Cap Alibi Generator
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-black tracking-tight mb-3">
+                Never get caught lacking <span class="text-gradient">again.</span>
+            </h1>
+            <p class="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto">
+                Type your situation below, pick your vibe level, and let the excuse generator cook up a response.
+            </p>
+        </div>
+
+        <!-- Generator Card -->
+        <div class="bg-glass rounded-3xl p-6 sm:p-8 shadow-2xl glow-violet mb-8 relative border border-white/10">
+
+            <!-- Situation Input Section -->
+            <div class="mb-6">
+                <label class="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-300 mb-2 flex items-center justify-between">
+                    <span><i class="fa-solid fa-terminal text-neonCyan mr-2"></i>1. What's the situation? (Type your context)</span>
+                    <span class="text-[10px] text-zinc-500">Be as real or wild as you want</span>
+                </label>
+                <div class="relative">
+                    <input type="text" id="customSituation" placeholder="e.g. Missed 8 AM lecture, skipped family dinner, left on read for 6 hours..."
+                        class="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-neonViolet focus:ring-2 focus:ring-neonViolet/20 transition font-sans">
+                    <div class="absolute right-3 top-3.5 flex items-center space-x-1">
+                        <button onclick="insertPreset('Missed morning lecture')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Class</button>
+                        <button onclick="insertPreset('Skipped work shift')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Work</button>
+                        <button onclick="insertPreset('Ghosted group project')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Group</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intensity Level Selection -->
+            <div class="mb-6">
+                <label class="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-300 mb-2">
+                    <span class="text-hotPink"><i class="fa-solid fa-sliders mr-2"></i>2. Choose Vibe / Intensity Level</span>
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Level 1 -->
+                    <button type="button" onclick="selectLevel('okish')" id="btn-okish"
+                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 hover:border-neonCyan/50 transition text-left flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-sm text-zinc-200 group-hover:text-neonCyan transition">Okish 😌</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400">Safe</span>
+                            </div>
+                            <p class="text-xs text-zinc-500">Believable everyday excuses. Low drama, high success rate.</p>
+                        </div>
+                        <div class="mt-3 flex items-center text-[10px] font-mono text-zinc-400 group-hover:text-neonCyan">
+                            <i class="fa-solid fa-circle-dot mr-1"></i><span>Classic & Casual</span>
+                        </div>
+                    </button>
+
+                    <!-- Level 2 -->
+                    <button type="button" onclick="selectLevel('fine')" id="btn-fine"
+                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 hover:border-hotPink/50 transition text-left flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-sm text-zinc-200 group-hover:text-hotPink transition">Fine 🥶</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-hotPink/10 text-hotPink">Smooth</span>
+                            </div>
+                            <p class="text-xs text-zinc-500">Clever, slightly dramatic, highly plausible alibis.</p>
+                        </div>
+                        <div class="mt-3 flex items-center text-[10px] font-mono text-zinc-400 group-hover:text-hotPink">
+                            <i class="fa-solid fa-circle-dot mr-1"></i><span>Main Character Energy</span>
+                        </div>
+                    </button>
+
+                    <!-- Level 3 -->
+                    <button type="button" onclick="selectLevel('master')" id="btn-master"
+                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonViolet/50 ring-2 ring-neonViolet/30 transition text-left flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-sm text-white group-hover:text-neonViolet transition">Master Level 👑</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neonViolet/20 text-neonViolet font-bold animate-pulse">UN-FAKEABLE</span>
+                            </div>
+                            <p class="text-xs text-zinc-400">Quantum-level physics & societal fabric distortions. Undeniable.</p>
+                        </div>
+                        <div class="mt-3 flex items-center text-[10px] font-mono text-neonViolet">
+                            <i class="fa-solid fa-fire mr-1"></i><span>God Tier Alibi</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Trigger Button -->
+            <button onclick="generateExcuse()" id="generateBtn"
+                class="w-full py-4 rounded-2xl bg-gradient-to-r from-hotPink via-neonViolet to-neonCyan text-white font-black text-sm tracking-widest uppercase shadow-lg glow-violet hover:opacity-95 transform active:scale-[0.99] transition flex items-center justify-center space-x-3 cursor-pointer">
+                <i class="fa-solid fa-wand-magic-sparkles text-lg animate-bounce"></i>
+                <span>GENERATE EXCUSE</span>
+            </button>
+        </div>
+
+        <!-- Output Result Card (Hidden Initially) -->
+        <div id="resultCard" class="hidden bg-glass rounded-3xl p-6 sm:p-8 shadow-2xl border border-neonViolet/30 glow-cyan relative mb-8 transition-all duration-300">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-neonCyan animate-ping"></span>
+                    <span class="text-xs font-mono font-bold tracking-wider text-neonCyan uppercase">Generated Excuse Result</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span id="badgeLevel" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-neonViolet/20 text-neonViolet font-bold uppercase">MASTER LEVEL</span>
+                    <span id="badgeSource" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold uppercase">Django API</span>
+                </div>
+            </div>
+
+            <!-- Excuse Text Display -->
+            <div class="mb-6">
+                <p id="excuseOutputText" class="text-lg sm:text-xl font-medium text-zinc-100 font-sans leading-relaxed tracking-wide bg-zinc-950/60 p-5 rounded-2xl border border-white/5 shadow-inner">
+                    <!-- Dynamic excuse text -->
+                </p>
+            </div>
+
+            <!-- Action Toolbar inside Result -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <button onclick="copyExcuse()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
+                    <i class="fa-regular fa-copy text-neonCyan"></i>
+                    <span id="copyBtnText">COPY</span>
+                </button>
+                <button onclick="saveToVault()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-bookmark text-hotPink"></i>
+                    <span>SAVE VAULT</span>
+                </button>
+                <button onclick="openFlexModal()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-mobile-screen text-neonViolet"></i>
+                    <span>FLEX TEXT</span>
+                </button>
+                <button onclick="generateExcuse()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate text-emerald-400"></i>
+                    <span>RE-COOK</span>
+                </button>
+            </div>
+        </div>
+
+        <section class="mb-6 rounded-2xl border border-cyan-400/20 bg-glass p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 class="font-mono text-xs font-bold uppercase tracking-wider text-cyan-300">Excuse inspiration</h2>
+                    <p id="inspirationText" class="mt-2 text-sm text-zinc-300">Get a quick prompt from our inspiration service.</p>
+                    <p id="inspirationSource" class="mt-1 text-[10px] text-zinc-500"></p>
+                </div>
+                <button id="inspirationButton" type="button" class="rounded-xl border border-cyan-400/30 px-4 py-2 text-xs font-bold text-cyan-100 hover:bg-cyan-950/40">Get inspiration</button>
+            </div>
+        </section>
+
+        <!-- Hall of Fame / Trending Exuses Quick Ticker -->
+        <div class="bg-glass rounded-2xl p-5 border border-white/5">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400 flex items-center">
+                    <i class="fa-solid fa-fire-flame-curved text-hotPink mr-2"></i> Community Masterpieces
+                </span>
+                <span class="text-[10px] font-mono text-zinc-500">Quick Picks</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div onclick="useQuickExcuse('My smart toaster connected to the university subnet and initiated an emergency DDoS attack on Blackboard, so campus IT locked my MAC address.')"
+                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">
+                    "My smart toaster launched a DDoS attack on Blackboard..."
+                </div>
+                <div onclick="useQuickExcuse('I got legally trapped in a time dilation loop while attempting to cross the hallway during passing period.')"
+                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">
+                    "Trapped in a hallway time dilation loop..."
+                </div>
+                <div onclick="useQuickExcuse('A family of raccoons unionized inside my engine block and refused to let me turn the ignition until I signed their collective bargaining agreement.')"
+                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">
+                    "Raccoons unionized inside my engine block..."
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full border-t border-white/10 bg-glass py-6 px-6 text-center text-xs text-zinc-500 font-mono">
+        <p>SICKO-EXCUSE ENGINE © 2026 // POWERED BY DJANGO & GEN-Z PROTOCOL</p>
+        <p class="mt-2"><a class="text-cyan-300 hover:text-white" href="{% url 'health' %}">Service health</a></p>
+    </footer>
+
+    <!-- VAULT MODAL -->
+    <div id="vaultModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-white/15 rounded-3xl max-w-lg w-full p-6 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-vault text-neonCyan text-lg"></i>
+                    <h3 class="font-black text-white text-base tracking-wider uppercase font-mono">EXCUSE VAULT</h3>
+                </div>
+                <button onclick="closeVaultModal()" class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="vaultList" class="flex-1 overflow-y-auto py-4 space-y-3">
+                <!-- Dynamically populated vault items -->
+            </div>
+
+            <div class="pt-4 border-t border-white/10 flex justify-between items-center">
+                <button onclick="clearVault()" class="text-xs font-mono text-rose-400 hover:text-rose-300 transition flex items-center space-x-1">
+                    <i class="fa-solid fa-trash mr-1"></i><span>Clear Vault</span>
+                </button>
+                <button onclick="closeVaultModal()" class="px-4 py-2 rounded-xl bg-neonViolet hover:bg-neonViolet/90 text-white font-bold text-xs font-mono transition">
+                    CLOSE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLEX / MOCK TEXT MESSAGE PREVIEW MODAL -->
+    <div id="flexModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-white/15 rounded-3xl max-w-md w-full p-6 shadow-2xl flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-mobile-screen text-hotPink text-lg"></i>
+                    <h3 class="font-black text-white text-base tracking-wider uppercase font-mono">GROUP CHAT FLEX PREVIEW</h3>
+                </div>
+                <button onclick="closeFlexModal()" class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Mock iPhone SMS Container -->
+            <div class="my-6 bg-zinc-900/60 p-4 rounded-2xl border border-white/10">
+                <div class="text-center text-[10px] font-mono text-zinc-500 mb-4">Today 9:41 AM</div>
+                <div class="flex flex-col space-y-3">
+                    <div class="self-start bg-zinc-800 text-zinc-300 text-xs px-3.5 py-2.5 rounded-2xl max-w-[80%] rounded-bl-sm font-sans">
+                        Yo where you at? Everyone is waiting.
+                    </div>
+                    <div id="flexMessageBubble" class="self-end bg-gradient-to-r from-hotPink to-neonViolet text-white text-xs px-4 py-3 rounded-2xl max-w-[85%] rounded-br-sm font-sans shadow-lg">
+                        <!-- Dynamic Excuse -->
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="copyExcuse()" class="w-full py-3 rounded-xl bg-neonCyan hover:bg-neonCyan/90 text-zinc-950 font-black text-xs font-mono uppercase tracking-widest transition shadow-lg">
+                COPY FOR CHAT 💅
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-neonCyan text-lg"></i>
+        <span id="toastText" class="text-xs font-mono font-bold tracking-wide">Copied to clipboard! 💅</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // State management
+        let currentLevel = 'master';
+        let currentExcuseText = '';
+        let excuseVault = JSON.parse(localStorage.getItem('sicko_excuse_vault') || '[]');
+
+        // Initialize Vault Count on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateVaultCount();
+        });
+
+        // Set Intensity Level
+        function selectLevel(level) {
+            currentLevel = level;
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 transition text-left flex flex-col justify-between";
+            });
+
+            const activeBtn = document.getElementById(`btn-${level}`);
+            if (level === 'okish') {
+                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonCyan/50 ring-2 ring-neonCyan/30 transition text-left flex flex-col justify-between";
+            } else if (level === 'fine') {
+                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-hotPink/50 ring-2 ring-hotPink/30 transition text-left flex flex-col justify-between";
+            } else if (level === 'master') {
+                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonViolet/50 ring-2 ring-neonViolet/30 transition text-left flex flex-col justify-between";
+            }
+        }
+
+        // Insert Quick Preset
+        function insertPreset(text) {
+            document.getElementById('customSituation').value = text;
+        }
+
+        function useQuickExcuse(text) {
+            document.getElementById('customSituation').value = text;
+            generateExcuse();
+        }
+
+        // Generate an excuse with the Django API and a local fallback.
+        async function generateExcuse() {
+            const situation = document.getElementById('customSituation').value.trim() || "Skipped obligation without warning";
+            const btn = document.getElementById('generateBtn');
+
+            // Button loading state
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-lg mr-2"></i><span>GENERATING EXCUSE...</span>`;
+
+            try {
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const response = await fetch('/api/generate/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ situation, level: currentLevel })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Excuse API request failed: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.status !== 'success' || typeof result.excuse !== 'string') {
+                    throw new Error("Excuse API returned an invalid response.");
+                }
+
+                displayResult(result.excuse, "Django API");
+
+            } catch (error) {
+                console.warn("Using local fallback generator:", error);
+                const fallbackExcuse = getLocalFallback(situation, currentLevel);
+                displayResult(fallbackExcuse, "Local fallback");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-lg animate-bounce"></i><span>GENERATE EXCUSE</span>`;
+            }
+        }
+
+        // Local Fallback Alibi Engine
+        function getLocalFallback(situation, level) {
+            const okishPool = [
+                `My alarm clock suffered a kernel panic right after the second snooze cycle regarding ${situation}.`,
+                `Traffic on the bridge was completely stalled due to a stray dog holding up rush hour for ${situation}.`,
+                `My Wi-Fi provider decided to execute an unscheduled firmware patch right when I needed to handle ${situation}.`
+            ];
+            const finePool = [
+                `I got unexpectedly roped into a neighborhood dispute over property lines right in the middle of ${situation}.`,
+                `My cat figured out how to lock the bedroom door from the outside, trapping me during ${situation}.`,
+                `I had to rush my roommate to urgent care because they tried to microwave metal spoons during ${situation}.`
+            ];
+            const masterPool = [
+                `A localized electromagnetic surge from a nearby amateur radio tower fried my phone's baseband processor during ${situation}.`,
+                `I was accidentally locked inside the municipal archives basement because the automated security locks triggered early regarding ${situation}.`,
+                `My smart home ecosystem registered a carbon monoxide false positive and sealed all exterior ventilation during ${situation}.`
+            ];
+
+            let pool = masterPool;
+            if (level === 'okish') pool = okishPool;
+            if (level === 'fine') pool = finePool;
+
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        // Render Result to UI
+        function displayResult(text, source) {
+            currentExcuseText = text;
+            document.getElementById('excuseOutputText').innerText = `"${text}"`;
+
+            const badge = document.getElementById('badgeLevel');
+            badge.innerText = currentLevel.toUpperCase() + " LEVEL";
+
+            const sourceBadge = document.getElementById('badgeSource');
+            sourceBadge.innerText = source;
+
+            const card = document.getElementById('resultCard');
+            card.classList.remove('hidden');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Copy to Clipboard (using fallback execCommand for iFrame compatibility)
+        function copyExcuse() {
+            const textarea = document.createElement("textarea");
+            textarea.value = currentExcuseText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Copied to clipboard! 💅");
+            } catch (err) {
+                showToast("Failed to copy!", true);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Toast Notification System
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+            toastText.innerText = message;
+
+            if (isError) {
+                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-rose-500/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-0 opacity-100 transition-all duration-300 z-50";
+            } else {
+                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-0 opacity-100 transition-all duration-300 z-50";
+            }
+
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50";
+            }, 3000);
+        }
+
+        // Vault Management
+        function saveToVault() {
+            if (!currentExcuseText) return;
+            if (!excuseVault.includes(currentExcuseText)) {
+                excuseVault.unshift(currentExcuseText);
+                if (excuseVault.length > 20) excuseVault.pop(); // keep max 20
+                localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));
+                updateVaultCount();
+                showToast("Saved to your Excuse Vault! 👑");
+            } else {
+                showToast("Already saved in vault!");
+            }
+        }
+
+        function updateVaultCount() {
+            document.getElementById('vaultCount').innerText = excuseVault.length;
+        }
+
+        function openVaultModal() {
+            const listContainer = document.getElementById('vaultList');
+            listContainer.innerHTML = '';
+
+            if (excuseVault.length === 0) {
+                listContainer.innerHTML = `<div class="text-center py-8 text-zinc-500 font-mono text-xs">Your vault is currently empty. Save some master alibis!</div>`;
+            } else {
+                excuseVault.forEach((excuse, index) => {
+                    const item = document.createElement('div');
+                    item.className = "p-3 rounded-2xl bg-zinc-900/80 border border-white/5 flex items-center justify-between space-x-3";
+                    const excuseText = document.createElement('p');
+                    excuseText.className = "text-xs text-zinc-300 font-sans line-clamp-2";
+                    excuseText.textContent = `"${excuse}"`;
+
+                    const actions = document.createElement('div');
+                    actions.className = "flex items-center space-x-2 flex-shrink-0";
+
+                    const copyButton = document.createElement('button');
+                    copyButton.className = "p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs transition";
+                    copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
+                    copyButton.addEventListener('click', async () => {
+                        try {
+                            await navigator.clipboard.writeText(excuse);
+                            showToast("Copied from vault!");
+                        } catch (error) {
+                            showToast("Failed to copy from vault.", true);
+                        }
+                    });
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = "p-2 rounded-xl bg-zinc-800 hover:bg-rose-900/50 text-zinc-400 hover:text-rose-400 text-xs transition";
+                    deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    deleteButton.addEventListener('click', () => deleteFromVault(index));
+
+                    actions.append(copyButton, deleteButton);
+                    item.append(excuseText, actions);
+                    listContainer.appendChild(item);
+                });
+            }
+
+            document.getElementById('vaultModal').classList.remove('hidden');
+        }
+
+        function closeVaultModal() {
+            document.getElementById('vaultModal').classList.add('hidden');
+        }
+
+        function deleteFromVault(index) {
+            excuseVault.splice(index, 1);
+            localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));
+            updateVaultCount();
+            openVaultModal();
+            showToast("Excuse removed from vault.");
+        }
+
+        function clearVault() {
+            excuseVault = [];
+            localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));
+            updateVaultCount();
+            openVaultModal();
+            showToast("Vault cleared.");
+        }
+
+        // Flex Mock SMS Modal
+        function openFlexModal() {
+            if (!currentExcuseText) return;
+            document.getElementById('flexMessageBubble').innerText = currentExcuseText;
+            document.getElementById('flexModal').classList.remove('hidden');
+        }
+
+        function closeFlexModal() {
+            document.getElementById('flexModal').classList.add('hidden');
+        }
+
+        document.getElementById('inspirationButton').addEventListener('click', async () => {
+            const button = document.getElementById('inspirationButton');
+            const text = document.getElementById('inspirationText');
+            const source = document.getElementById('inspirationSource');
+            button.disabled = true;
+            text.innerText = 'Finding inspiration...';
+            try {
+                const response = await fetch('/api/inspiration/');
+                if (!response.ok) throw new Error(`Inspiration request failed: ${response.status}`);
+                const result = await response.json();
+                text.innerText = result.text;
+                source.innerText = `Source: ${result.source}`;
+            } catch (error) {
+                text.innerText = 'Inspiration is unavailable right now. Try again shortly.';
+                source.innerText = '';
+            } finally {
+                button.disabled = false;
+            }
+        });
+    </script>
+    {% include "myapp/chat_widget.html" %}
+</body>
+</html>
