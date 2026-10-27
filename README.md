@@ -67,10 +67,13 @@ Custom 404/500 templates are enabled when `DJANGO_DEBUG=False`. To verify the 40
 
 ## Deployment checklist
 
-1. Choose a Django-compatible host with HTTPS, persistent PostgreSQL, and MongoDB service/connection string.
-2. Push this repository to GitHub and add the production HTTPS URL to this README and the assessment task sheet.
-3. Configure the environment variables above in the hosting dashboard; do not put credentials in source or commit history.
-4. Run `python manage.py migrate` as a release step, then collect static files with `python manage.py collectstatic --noinput`.
-5. Set the deployed host in `DJANGO_ALLOWED_HOSTS`, the HTTPS origin in `DJANGO_CSRF_TRUSTED_ORIGINS`, and enable `DJANGO_SECURE_SSL_REDIRECT`. Set HSTS only after confirming HTTPS works for the domain.
-6. Visit `/health/`, check the generator and chat, test a narrow mobile viewport, and request a random nonexistent path to confirm the branded 404 page.
-7. Copy the final task title, HTTPS website URL, and GitHub URL into the assessment spreadsheet.
+### Vercel
+
+1. Import `https://github.com/Dhakshinesh-designs/excuse-generator` into your Vercel account. Vercel detects Django from `manage.py` and uses `myproject.wsgi:application`; Python dependencies are read from `requirements.txt`.
+2. Connect a persistent PostgreSQL integration and set its `DATABASE_URL`. Do not use the local SQLite database for production; Vercel functions do not provide persistent local-disk storage.
+3. Configure `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS=.vercel.app`, and `DJANGO_SECURE_SSL_REDIRECT=True` in Vercel's project environment variables.
+4. Provision MongoDB (for example, MongoDB Atlas) and set `MONGODB_URI` and `MONGODB_DATABASE`. Set `GEMINI_API_KEY` to enable generative answers. Add secrets in Vercel only; never commit them.
+5. Deploy once to obtain the production hostname, then set `DJANGO_CSRF_TRUSTED_ORIGINS` to the exact HTTPS origin, such as `https://your-project.vercel.app`, and redeploy.
+6. Link the Vercel project locally, pull its production environment to the ignored `.env.local` file with the Vercel CLI, and run `python manage.py migrate` to create tables and seed the FAQ/error catalog. Vercel automatically collects and serves static files from `STATIC_ROOT`.
+7. Check `/health/`, try the assistant, verify a narrow mobile viewport, and request a random nonexistent URL to confirm the custom 404. Set HSTS only after HTTPS is confirmed for the domain; include subdomains only if all of them support HTTPS.
+8. Replace the live-link placeholder above and enter the task title, HTTPS URL, and GitHub URL in the assessment spreadsheet.
