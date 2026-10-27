@@ -1,625 +1,973 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sicko-Excuse: say less, sound real.">
     <link rel="icon" type="image/svg+xml" href="{% static 'myapp/favicon.svg' %}">
-    <title>SICKO-EXCUSE™ // Ultimate Gen-Z Alibi Engine</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Sicko-Excuse | Say less. Sound real.</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        neonViolet: '#8b5cf6',
-                        neonCyan: '#06b6d4',
-                        limeGreen: '#10b981',
-                        hotPink: '#ec4899',
-                        darkBg: '#09090b',
-                        cardDark: '#121216'
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace']
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        html { overflow-x: clip; }
+        :root {
+            color-scheme: dark;
+            --page: #100b12;
+            --panel: #19121c;
+            --panel-raised: #211827;
+            --line: #392940;
+            --ink: #fffaf7;
+            --muted: #b6a8bb;
+            --soft: #87788d;
+            --orange: #ff9a37;
+            --pink: #ff3158;
+            --purple: #a76bff;
+            --cyan: #66e4ee;
+        }
+        * { box-sizing: border-box; }
+        html { min-width: 320px; overflow-x: clip; background: var(--page); }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #09090b;
-            color: #f4f4f5;
-            overflow-x: hidden;
+            min-width: 320px;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: clip;
+            background:
+                radial-gradient(ellipse at 74% 2%, rgba(120, 45, 37, .22), transparent 34rem),
+                radial-gradient(ellipse at 12% 48%, rgba(66, 34, 69, .16), transparent 38rem),
+                var(--page);
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
-        .glow-violet { box-shadow: 0 0 25px rgba(139, 92, 246, 0.3); }
-        .glow-pink { box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); }
-        .glow-cyan { box-shadow: 0 0 25px rgba(6, 182, 212, 0.3); }
-        .text-gradient {
-            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+        button, input, textarea { font: inherit; }
+        button { color: inherit; }
+        button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+            outline: 2px solid var(--cyan);
+            outline-offset: 3px;
+        }
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            background: rgba(16, 11, 18, .86);
+            backdrop-filter: blur(18px);
+        }
+        .nav-inner {
+            width: min(1120px, calc(100% - 40px));
+            min-height: 72px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--ink);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 900;
+            letter-spacing: .11em;
+        }
+        .brand-mark {
+            display: grid;
+            width: 36px;
+            height: 36px;
+            place-items: center;
+            border: 1px solid rgba(255,154,55,.35);
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(255,154,55,.2), rgba(255,49,88,.13));
+            color: var(--orange);
+            font-size: 19px;
+        }
+        .brand-name {
+            background: linear-gradient(100deg, #ffc36b, #ff7654 55%, #ff456c);
+            background-clip: text;
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: transparent;
         }
-        .bg-glass {
-            background: rgba(18, 18, 22, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .nav-links { display: flex; align-items: center; gap: 5px; }
+        .nav-links a, .vault-open {
+            padding: 9px 12px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 13px;
+            text-decoration: none;
+            transition: .18s ease;
+            cursor: pointer;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
+        .nav-links a:hover, .vault-open:hover {
+            border-color: var(--line);
+            background: rgba(255,255,255,.045);
+            color: var(--ink);
         }
-        .floating-element {
-            animation: float 6s ease-in-out infinite;
+        .nav-actions { display: flex; align-items: center; gap: 9px; }
+        .vault-open { border-color: var(--line); color: var(--ink); }
+        .hero {
+            width: min(1040px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: clamp(52px, 9vw, 106px) 0 42px;
         }
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0 0 20px;
+            color: #ffc073;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .19em;
+            text-transform: uppercase;
         }
-        .bg-pulse-glow {
-            animation: pulseGlow 4s ease-in-out infinite;
+        .eyebrow::before {
+            width: 23px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--orange), var(--pink));
+            content: "";
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #09090b; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        .hero h1 {
+            max-width: 850px;
+            margin: 0;
+            font-size: clamp(56px, 10.7vw, 112px);
+            font-weight: 900;
+            letter-spacing: -.085em;
+            line-height: .91;
+        }
+        .hero-gradient {
+            display: block;
+            padding-bottom: .07em;
+            background: linear-gradient(100deg, #ffc477 1%, #ff753e 47%, #ff3d61 93%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero-copy {
+            max-width: 530px;
+            margin: 25px 0 0;
+            color: var(--muted);
+            font-size: clamp(15px, 2vw, 18px);
+            line-height: 1.8;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(270px, .72fr);
+            align-items: start;
+            gap: 24px;
+            width: min(1040px, calc(100% - 40px));
+            margin: 0 auto 80px;
+        }
+        .generator, .preview, .inspiration {
+            border: 1px solid rgba(229,190,235,.13);
+            border-radius: 26px;
+            background: linear-gradient(150deg, rgba(35,25,40,.93), rgba(23,16,27,.96));
+            box-shadow: 0 24px 70px rgba(0,0,0,.24);
+        }
+        .generator { padding: clamp(20px, 4vw, 34px); }
+        .field-block + .field-block { margin-top: 31px; }
+        .field-label {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0 0 13px;
+            color: #f7edf7;
+            font-size: 14px;
+            font-weight: 750;
+        }
+        .field-hint { color: var(--soft); font-size: 11px; font-weight: 500; }
+        .situation-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+        .situation-list legend { float: left; width: 100%; }
+        .situation-choice {
+            position: relative;
+            cursor: pointer;
+        }
+        .situation-choice input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            clip-path: inset(50%);
+        }
+        .situation-choice span {
+            display: block;
+            padding: 11px 16px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 650;
+            transition: .18s ease;
+        }
+        .situation-choice:hover span { border-color: #765a7b; color: var(--ink); }
+        .situation-choice input:checked + span {
+            border-color: #ffbd76;
+            background: #fff1df;
+            color: #24151c;
+            box-shadow: 0 5px 22px rgba(255,153,54,.15);
+        }
+        .situation-choice input:focus-visible + span {
+            outline: 2px solid var(--cyan);
+            outline-offset: 3px;
+        }
+        .intensity {
+            width: 100%;
+            height: 10px;
+            margin: 9px 0 0;
+            appearance: none;
+            border: 0;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #ffad43, #ff7b37, #ff365b);
+            cursor: pointer;
+        }
+        .intensity::-webkit-slider-thumb {
+            width: 21px;
+            height: 21px;
+            appearance: none;
+            border: 4px solid #fff4e8;
+            border-radius: 50%;
+            background: #ff6544;
+            box-shadow: 0 0 20px rgba(255,139,56,.6);
+        }
+        .intensity::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border: 4px solid #fff4e8;
+            border-radius: 50%;
+            background: #ff6544;
+            box-shadow: 0 0 20px rgba(255,139,56,.6);
+        }
+        .level-labels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .level-labels button {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--soft);
+            text-align: left;
+            cursor: pointer;
+        }
+        .level-labels strong { display: block; margin-bottom: 5px; color: var(--muted); font-size: 13px; }
+        .level-labels span { font-size: 11px; line-height: 1.5; }
+        .level-labels button[aria-pressed="true"] strong { color: #ffc278; }
+        .text-field {
+            display: block;
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 16px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: rgba(12,9,15,.64);
+            color: var(--ink);
+            font-size: 14px;
+            transition: border-color .18s ease, box-shadow .18s ease;
+        }
+        .text-field::placeholder { color: #766a7c; }
+        .text-field:focus { border-color: #bc79e5; box-shadow: 0 0 0 3px rgba(167,107,255,.12); outline: 0; }
+        textarea.text-field { min-height: 90px; resize: vertical; }
+        .form-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 23px; }
+        .button {
+            display: inline-flex;
+            min-height: 48px;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 0 19px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: transparent;
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 750;
+            text-decoration: none;
+            transition: transform .18s ease, border-color .18s ease, filter .18s ease;
+            cursor: pointer;
+        }
+        .button:hover { transform: translateY(-1px); border-color: #7c5e83; }
+        .button-primary {
+            min-width: 176px;
+            border-color: transparent;
+            background: linear-gradient(100deg, #ff385d, #ff683a 85%);
+            color: #210c14;
+            box-shadow: 0 9px 30px rgba(255,61,83,.19);
+        }
+        .button-primary:hover { filter: brightness(1.08); }
+        .button:disabled { opacity: .65; cursor: wait; transform: none; }
+        .other-situation[hidden] { display: none; }
+        .preview { position: sticky; top: 94px; overflow: hidden; }
+        .preview-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 21px 22px;
+            border-bottom: 1px solid rgba(255,255,255,.075);
+        }
+        .avatar {
+            display: grid;
+            width: 40px;
+            height: 40px;
+            flex: 0 0 auto;
+            place-items: center;
+            border: 1px solid rgba(255,181,97,.3);
+            border-radius: 50%;
+            background: linear-gradient(145deg, rgba(255,165,73,.2), rgba(255,49,88,.18));
+            font-size: 18px;
+        }
+        .preview-name { font-size: 13px; font-weight: 800; }
+        .online { margin-top: 4px; color: #8bdab6; font-size: 11px; }
+        .online::before {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 6px;
+            border-radius: 50%;
+            background: #71d5a2;
+            content: "";
+        }
+        .preview-body { min-height: 185px; padding: 22px; }
+        .preview-caption { margin: 0 0 17px; color: var(--soft); font-size: 11px; }
+        .excuse-output {
+            margin: 0;
+            color: #fff7f2;
+            font-size: 15px;
+            line-height: 1.75;
+            overflow-wrap: anywhere;
+        }
+        .excuse-output.is-placeholder { color: #9c8ea0; }
+        .result-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            padding: 0 18px 18px;
+        }
+        .result-action {
+            min-height: 40px;
+            padding: 8px 7px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: rgba(255,255,255,.035);
+            color: #e7dce9;
+            font-size: 11px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+        .result-action:hover { border-color: #785c80; background: rgba(255,255,255,.075); }
+        .inspiration {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px 24px;
+        }
+        .inspiration h2 { margin: 0; color: #ffc278; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+        .inspiration p { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+        .inspiration button {
+            flex: 0 0 auto;
+            min-height: 39px;
+            padding: 0 14px;
+            border: 1px solid rgba(255,192,120,.35);
+            border-radius: 999px;
+            background: rgba(255,154,55,.08);
+            color: #ffd5a1;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .quick-help {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            color: var(--soft);
+            font-size: 12px;
+        }
+        .quick-help a { color: #ffc278; text-decoration: none; }
+        .quick-help a:hover { text-decoration: underline; }
+        .site-footer {
+            padding: 24px 20px;
+            border-top: 1px solid rgba(255,255,255,.08);
+            color: var(--soft);
+            font-size: 11px;
+            text-align: center;
+        }
+        .site-footer a { color: #ffc278; text-decoration: none; }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            background: rgba(5,3,7,.82);
+            backdrop-filter: blur(10px);
+        }
+        .modal-backdrop[hidden] { display: none; }
+        .modal-card {
+            width: min(460px, 100%);
+            max-height: min(78vh, 640px);
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            background: #19121c;
+            box-shadow: 0 28px 90px rgba(0,0,0,.55);
+        }
+        .modal-header, .modal-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 19px; }
+        .modal-header { border-bottom: 1px solid rgba(255,255,255,.08); }
+        .modal-header h2 { margin: 0; font-size: 14px; }
+        .modal-footer { border-top: 1px solid rgba(255,255,255,.08); }
+        .modal-list { max-height: 52vh; overflow-y: auto; padding: 13px 18px; }
+        .vault-entry { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+        .vault-entry p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
+        .vault-entry button, .modal-close {
+            flex: 0 0 auto;
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 86px;
+            z-index: 70;
+            max-width: calc(100vw - 40px);
+            padding: 12px 16px;
+            border: 1px solid rgba(255,190,120,.35);
+            border-radius: 14px;
+            background: #231826;
+            color: var(--ink);
+            font-size: 13px;
+            box-shadow: 0 14px 35px rgba(0,0,0,.3);
+        }
+        .toast[hidden] { display: none; }
+        @media (max-width: 760px) {
+            .nav-inner { width: min(100% - 28px, 600px); min-height: 64px; flex-wrap: wrap; gap: 8px; padding: 10px 0; }
+            .brand { font-size: 13px; }
+            .nav-links { order: 3; width: 100%; justify-content: space-between; overflow-x: auto; }
+            .nav-links a { padding: 8px 10px; white-space: nowrap; font-size: 12px; }
+            .nav-actions { margin-left: auto; }
+            .vault-open { padding: 8px 11px; font-size: 12px; }
+            .hero { width: min(100% - 36px, 600px); padding-top: 55px; }
+            .layout { grid-template-columns: minmax(0, 1fr); gap: 16px; width: min(100% - 28px, 600px); margin-bottom: 50px; }
+            .preview { position: static; grid-row: 2; }
+            .generator { padding: 22px 18px; border-radius: 22px; }
+            .inspiration { grid-column: auto; align-items: flex-start; padding: 18px; }
+            .quick-help { grid-column: auto; }
+        }
+        @media (max-width: 420px) {
+            .hero { padding-top: 43px; }
+            h1 { font-size: clamp(52px, 16vw, 68px); }
+            .field-label { align-items: flex-start; flex-direction: column; gap: 5px; }
+            .situation-list { gap: 7px; }
+            .situation-choice span { padding: 10px 12px; font-size: 12px; }
+            .form-actions { display: grid; grid-template-columns: 1fr; }
+            .button { width: 100%; }
+            .inspiration { flex-direction: column; }
+            .inspiration button { width: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-hotPink selection:text-white relative">
-    <form id="csrfForm" class="hidden">{% csrf_token %}</form>
-
-    <!-- Ambient Background Glows -->
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-neonViolet/20 rounded-full blur-[120px] pointer-events-none bg-pulse-glow"></div>
-    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-hotPink/15 rounded-full blur-[120px] pointer-events-none bg-pulse-glow" style="animation-delay: 2s;"></div>
-    <div class="absolute bottom-10 left-1/3 w-96 h-96 bg-neonCyan/15 rounded-full blur-[120px] pointer-events-none bg-pulse-glow" style="animation-delay: 1s;"></div>
-
-    <!-- Header / Navbar -->
-    <header class="w-full border-b border-white/10 bg-glass sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-hotPink via-neonViolet to-neonCyan flex items-center justify-center shadow-lg glow-violet">
-                <i class="fa-solid fa-fire text-white text-lg"></i>
+<body>
+    <form id="csrfForm" hidden>{% csrf_token %}</form>
+    <header class="site-header">
+        <nav class="nav-inner" aria-label="Main navigation">
+            <a class="brand" href="{% url 'index' %}">
+                <span class="brand-mark" aria-hidden="true">✦</span>
+                <span class="brand-name">SICKO-EXCUSE</span>
+            </a>
+            <div class="nav-links">
+                <a href="{% url 'index' %}" aria-current="page">Generator</a>
+                <a href="{% url 'faq' %}">FAQs</a>
+                <a href="{% url 'errors' %}">Error codes</a>
+                <a href="{% url 'about' %}">About</a>
             </div>
-            <div>
-                <span class="text-xl font-black tracking-wider text-gradient uppercase font-mono">SICKO-EXCUSE</span>
-                <span class="block text-[10px] text-zinc-400 font-mono tracking-widest">v4.0.2 // EXCUSE GENERATOR</span>
+            <div class="nav-actions">
+                <button class="vault-open" type="button" onclick="openVaultModal()">Vault <span id="vaultCount">0</span></button>
             </div>
-        </div>
-
-        <div class="flex items-center space-x-3">
-            <button onclick="openVaultModal()" class="px-4 py-2 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-white/10 text-xs font-bold font-mono text-zinc-300 hover:text-white transition flex items-center space-x-2 shadow-sm">
-                <i class="fa-solid fa-vault text-neonCyan"></i>
-                <span>VAULT (<span id="vaultCount">0</span>)</span>
-            </button>
-            <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>DJANGO API READY</span>
-            </div>
-        </div>
+        </nav>
     </header>
-    {% include "myapp/site_nav.html" %}
 
-    <!-- Main Content Container -->
-    <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-8 z-10">
-
-        <!-- Hero Intro -->
-        <div class="text-center mb-8">
-            <div class="inline-block mb-3 px-3.5 py-1 rounded-full bg-hotPink/10 border border-hotPink/30 text-hotPink text-xs font-bold tracking-widest uppercase font-mono">
-                ⚡ No Cap Alibi Generator
-            </div>
-            <h1 class="text-4xl sm:text-6xl font-black tracking-tight mb-3">
-                Never get caught lacking <span class="text-gradient">again.</span>
-            </h1>
-            <p class="text-zinc-400 text-sm sm:text-base max-w-xl mx-auto">
-                Type your situation below, pick your vibe level, and let the excuse generator cook up a response.
-            </p>
-        </div>
-
-        <!-- Generator Card -->
-        <div class="bg-glass rounded-3xl p-6 sm:p-8 shadow-2xl glow-violet mb-8 relative border border-white/10">
-
-            <!-- Situation Input Section -->
-            <div class="mb-6">
-                <label class="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-300 mb-2 flex items-center justify-between">
-                    <span><i class="fa-solid fa-terminal text-neonCyan mr-2"></i>1. What's the situation? (Type your context)</span>
-                    <span class="text-[10px] text-zinc-500">Be as real or wild as you want</span>
-                </label>
-                <div class="relative">
-                    <input type="text" id="customSituation" placeholder="e.g. Missed 8 AM lecture, skipped family dinner, left on read for 6 hours..."
-                        class="w-full bg-zinc-950/80 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-neonViolet focus:ring-2 focus:ring-neonViolet/20 transition font-sans">
-                    <div class="absolute right-3 top-3.5 flex items-center space-x-1">
-                        <button onclick="insertPreset('Missed morning lecture')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Class</button>
-                        <button onclick="insertPreset('Skipped work shift')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Work</button>
-                        <button onclick="insertPreset('Ghosted group project')" class="text-[10px] font-mono bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white px-2 py-1 rounded-lg border border-white/5 transition">Group</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Intensity Level Selection -->
-            <div class="mb-6">
-                <label class="block text-xs font-mono font-bold uppercase tracking-wider text-zinc-300 mb-2">
-                    <span class="text-hotPink"><i class="fa-solid fa-sliders mr-2"></i>2. Choose Vibe / Intensity Level</span>
-                </label>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <!-- Level 1 -->
-                    <button type="button" onclick="selectLevel('okish')" id="btn-okish"
-                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 hover:border-neonCyan/50 transition text-left flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm text-zinc-200 group-hover:text-neonCyan transition">Okish 😌</span>
-                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 text-zinc-400">Safe</span>
-                            </div>
-                            <p class="text-xs text-zinc-500">Believable everyday excuses. Low drama, high success rate.</p>
-                        </div>
-                        <div class="mt-3 flex items-center text-[10px] font-mono text-zinc-400 group-hover:text-neonCyan">
-                            <i class="fa-solid fa-circle-dot mr-1"></i><span>Classic & Casual</span>
-                        </div>
-                    </button>
-
-                    <!-- Level 2 -->
-                    <button type="button" onclick="selectLevel('fine')" id="btn-fine"
-                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 hover:border-hotPink/50 transition text-left flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm text-zinc-200 group-hover:text-hotPink transition">Fine 🥶</span>
-                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-hotPink/10 text-hotPink">Smooth</span>
-                            </div>
-                            <p class="text-xs text-zinc-500">Clever, slightly dramatic, highly plausible alibis.</p>
-                        </div>
-                        <div class="mt-3 flex items-center text-[10px] font-mono text-zinc-400 group-hover:text-hotPink">
-                            <i class="fa-solid fa-circle-dot mr-1"></i><span>Main Character Energy</span>
-                        </div>
-                    </button>
-
-                    <!-- Level 3 -->
-                    <button type="button" onclick="selectLevel('master')" id="btn-master"
-                        class="level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonViolet/50 ring-2 ring-neonViolet/30 transition text-left flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="font-bold text-sm text-white group-hover:text-neonViolet transition">Master Level 👑</span>
-                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-neonViolet/20 text-neonViolet font-bold animate-pulse">UN-FAKEABLE</span>
-                            </div>
-                            <p class="text-xs text-zinc-400">Quantum-level physics & societal fabric distortions. Undeniable.</p>
-                        </div>
-                        <div class="mt-3 flex items-center text-[10px] font-mono text-neonViolet">
-                            <i class="fa-solid fa-fire mr-1"></i><span>God Tier Alibi</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Action Trigger Button -->
-            <button onclick="generateExcuse()" id="generateBtn"
-                class="w-full py-4 rounded-2xl bg-gradient-to-r from-hotPink via-neonViolet to-neonCyan text-white font-black text-sm tracking-widest uppercase shadow-lg glow-violet hover:opacity-95 transform active:scale-[0.99] transition flex items-center justify-center space-x-3 cursor-pointer">
-                <i class="fa-solid fa-wand-magic-sparkles text-lg animate-bounce"></i>
-                <span>GENERATE EXCUSE</span>
-            </button>
-        </div>
-
-        <!-- Output Result Card (Hidden Initially) -->
-        <div id="resultCard" class="hidden bg-glass rounded-3xl p-6 sm:p-8 shadow-2xl border border-neonViolet/30 glow-cyan relative mb-8 transition-all duration-300">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
-                <div class="flex items-center space-x-2">
-                    <span class="w-3 h-3 rounded-full bg-neonCyan animate-ping"></span>
-                    <span class="text-xs font-mono font-bold tracking-wider text-neonCyan uppercase">Generated Excuse Result</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <span id="badgeLevel" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-neonViolet/20 text-neonViolet font-bold uppercase">MASTER LEVEL</span>
-                    <span id="badgeSource" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold uppercase">Django API</span>
-                </div>
-            </div>
-
-            <!-- Excuse Text Display -->
-            <div class="mb-6">
-                <p id="excuseOutputText" class="text-lg sm:text-xl font-medium text-zinc-100 font-sans leading-relaxed tracking-wide bg-zinc-950/60 p-5 rounded-2xl border border-white/5 shadow-inner">
-                    <!-- Dynamic excuse text -->
-                </p>
-            </div>
-
-            <!-- Action Toolbar inside Result -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <button onclick="copyExcuse()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
-                    <i class="fa-regular fa-copy text-neonCyan"></i>
-                    <span id="copyBtnText">COPY</span>
-                </button>
-                <button onclick="saveToVault()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-bookmark text-hotPink"></i>
-                    <span>SAVE VAULT</span>
-                </button>
-                <button onclick="openFlexModal()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-mobile-screen text-neonViolet"></i>
-                    <span>FLEX TEXT</span>
-                </button>
-                <button onclick="generateExcuse()" class="px-4 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-white/10 text-xs font-mono font-bold text-zinc-200 hover:text-white transition flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-rotate text-emerald-400"></i>
-                    <span>RE-COOK</span>
-                </button>
-            </div>
-        </div>
-
-        <section class="mb-6 rounded-2xl border border-cyan-400/20 bg-glass p-5">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <h2 class="font-mono text-xs font-bold uppercase tracking-wider text-cyan-300">Excuse inspiration</h2>
-                    <p id="inspirationText" class="mt-2 text-sm text-zinc-300">Get a quick prompt from our inspiration service.</p>
-                    <p id="inspirationSource" class="mt-1 text-[10px] text-zinc-500"></p>
-                </div>
-                <button id="inspirationButton" type="button" class="rounded-xl border border-cyan-400/30 px-4 py-2 text-xs font-bold text-cyan-100 hover:bg-cyan-950/40">Get inspiration</button>
-            </div>
+    <main>
+        <section class="hero">
+            <p class="eyebrow">Excuse generator · Your story stays yours</p>
+            <h1>Say less.<span class="hero-gradient">Sound real.</span></h1>
+            <p class="hero-copy">Pick what happened, set how convincing it needs to be, and get a message that sounds like you—not an excuse generator.</p>
         </section>
 
-        <!-- Hall of Fame / Trending Exuses Quick Ticker -->
-        <div class="bg-glass rounded-2xl p-5 border border-white/5">
-            <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-mono font-bold uppercase tracking-wider text-zinc-400 flex items-center">
-                    <i class="fa-solid fa-fire-flame-curved text-hotPink mr-2"></i> Community Masterpieces
-                </span>
-                <span class="text-[10px] font-mono text-zinc-500">Quick Picks</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div onclick="useQuickExcuse('My smart toaster connected to the university subnet and initiated an emergency DDoS attack on Blackboard, so campus IT locked my MAC address.')"
-                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">
-                    "My smart toaster launched a DDoS attack on Blackboard..."
+        <div class="layout">
+            <section class="generator" aria-label="Excuse generator">
+                <fieldset class="field-block situation-list" aria-labelledby="situationLabel">
+                    <legend id="situationLabel" class="field-label">What happened?</legend>
+                    <label class="situation-choice"><input type="radio" name="situation" value="late_to_class" checked><span>Late to class</span></label>
+                    <label class="situation-choice"><input type="radio" name="situation" value="missed_deadline"><span>Missed a deadline</span></label>
+                    <label class="situation-choice"><input type="radio" name="situation" value="skipped_call"><span>Skipped a call</span></label>
+                    <label class="situation-choice"><input type="radio" name="situation" value="cancelled_plans"><span>Cancelled plans</span></label>
+                    <label class="situation-choice"><input type="radio" name="situation" value="something_else"><span>Something else</span></label>
+                </fieldset>
+
+                <div id="otherSituationField" class="field-block other-situation" hidden>
+                    <label class="field-label" for="customSituation">What happened? <span class="field-hint">Only used to tailor the excuse</span></label>
+                    <input class="text-field" id="customSituation" maxlength="500" type="text" placeholder="Give a little context">
                 </div>
-                <div onclick="useQuickExcuse('I got legally trapped in a time dilation loop while attempting to cross the hallway during passing period.')"
-                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">
-                    "Trapped in a hallway time dilation loop..."
+
+                <div class="field-block">
+                    <label class="field-label" for="intensityRange">
+                        How convincing?
+                        <span class="field-hint">Pick your vibe</span>
+                    </label>
+                    <input class="intensity" id="intensityRange" type="range" min="0" max="2" step="1" value="1" aria-label="How convincing?">
+                    <div class="level-labels">
+                        <button type="button" data-level="okish" aria-pressed="false"><strong>Okish</strong><span>Quick and simple</span></button>
+                        <button type="button" data-level="fine" aria-pressed="true"><strong>Fine</strong><span>Specific and believable</span></button>
+                        <button type="button" data-level="master" aria-pressed="false"><strong>Master</strong><span>Nobody asks follow-ups</span></button>
+                    </div>
                 </div>
-                <div onclick="useQuickExcuse('A family of raccoons unionized inside my engine block and refused to let me turn the ignition until I signed their collective bargaining agreement.')"
-                    class="p-3 rounded-xl bg-zinc-950/50 hover:bg-zinc-900 border border-white/5 cursor-pointer transition text-xs text-zinc-300 truncate">
-                    "Raccoons unionized inside my engine block..."
+
+                <div class="field-block">
+                    <label class="field-label" for="customInput">Anything specific? <span class="field-hint">Optional detail. It won't appear in your excuse.</span></label>
+                    <textarea class="text-field" id="customInput" maxlength="500" placeholder="A detail to help personalize the excuse"></textarea>
                 </div>
-            </div>
+
+                <div class="form-actions">
+                    <button class="button" type="button" onclick="useVaultExcuse()">Pull from my vault</button>
+                    <button class="button button-primary" id="generateBtn" type="button" onclick="generateExcuse()">✦ <span>Write one with AI</span></button>
+                </div>
+            </section>
+
+            <section class="preview" aria-label="Generated excuse">
+                <div class="preview-top">
+                    <div class="avatar" aria-hidden="true">✦</div>
+                    <div><div class="preview-name">Your message</div><div class="online">Ready when you are</div></div>
+                </div>
+                <div class="preview-body" aria-live="polite">
+                    <p class="preview-caption" id="previewCaption">Your excuse shows up here. Your situation stays private.</p>
+                    <p class="excuse-output is-placeholder" id="excuseOutputText">Pick what happened, then write your excuse.</p>
+                    <span id="badgeLevel" hidden>FINE LEVEL</span>
+                    <span id="badgeSource" hidden>Django API</span>
+                </div>
+                <div class="result-actions">
+                    <button class="result-action" type="button" onclick="copyExcuse()">▣ &nbsp; Copy</button>
+                    <button class="result-action" type="button" onclick="saveToVault()">▮ &nbsp; Save vault</button>
+                    <button class="result-action" type="button" onclick="openFlexModal()">▯ &nbsp; Flex text</button>
+                    <button class="result-action" type="button" onclick="generateExcuse()">↻ &nbsp; Re-cook</button>
+                </div>
+            </section>
+
+            <section class="inspiration" aria-label="Excuse inspiration">
+                <div>
+                    <h2>Need a little inspiration?</h2>
+                    <p id="inspirationText">Pull a random spark from our inspiration service.</p>
+                    <p class="field-hint" id="inspirationSource"></p>
+                </div>
+                <button id="inspirationButton" type="button">Get inspiration</button>
+            </section>
+
+            <nav class="quick-help" aria-label="More help">
+                <span>Need help?</span>
+                <a href="{% url 'faq' %}">Browse FAQs</a>
+                <span>·</span>
+                <a href="{% url 'errors' %}">Understand an error code</a>
+                <span>·</span>
+                <a href="{% url 'health' %}">Service health</a>
+            </nav>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="w-full border-t border-white/10 bg-glass py-6 px-6 text-center text-xs text-zinc-500 font-mono">
-        <p>SICKO-EXCUSE ENGINE © 2026 // POWERED BY DJANGO & GEN-Z PROTOCOL</p>
-        <p class="mt-2"><a class="text-cyan-300 hover:text-white" href="{% url 'health' %}">Service health</a></p>
-    </footer>
+    <footer class="site-footer">SICKO-EXCUSE <span aria-hidden="true">·</span> <a href="{% url 'about' %}">About this project</a></footer>
 
-    <!-- VAULT MODAL -->
-    <div id="vaultModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-white/15 rounded-3xl max-w-lg w-full p-6 shadow-2xl max-h-[85vh] flex flex-col">
-            <div class="flex items-center justify-between pb-4 border-b border-white/10">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-vault text-neonCyan text-lg"></i>
-                    <h3 class="font-black text-white text-base tracking-wider uppercase font-mono">EXCUSE VAULT</h3>
-                </div>
-                <button onclick="closeVaultModal()" class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div id="vaultList" class="flex-1 overflow-y-auto py-4 space-y-3">
-                <!-- Dynamically populated vault items -->
-            </div>
-
-            <div class="pt-4 border-t border-white/10 flex justify-between items-center">
-                <button onclick="clearVault()" class="text-xs font-mono text-rose-400 hover:text-rose-300 transition flex items-center space-x-1">
-                    <i class="fa-solid fa-trash mr-1"></i><span>Clear Vault</span>
-                </button>
-                <button onclick="closeVaultModal()" class="px-4 py-2 rounded-xl bg-neonViolet hover:bg-neonViolet/90 text-white font-bold text-xs font-mono transition">
-                    CLOSE
-                </button>
-            </div>
-        </div>
+    <div class="modal-backdrop" id="vaultModal" hidden>
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="vaultTitle">
+            <div class="modal-header"><h2 id="vaultTitle">Your excuse vault</h2><button class="modal-close" type="button" onclick="closeVaultModal()">Close</button></div>
+            <div class="modal-list" id="vaultList"></div>
+            <div class="modal-footer"><button class="modal-close" type="button" onclick="clearVault()">Clear vault</button><button class="modal-close" type="button" onclick="closeVaultModal()">Done</button></div>
+        </section>
     </div>
 
-    <!-- FLEX / MOCK TEXT MESSAGE PREVIEW MODAL -->
-    <div id="flexModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-white/15 rounded-3xl max-w-md w-full p-6 shadow-2xl flex flex-col">
-            <div class="flex items-center justify-between pb-4 border-b border-white/10">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-mobile-screen text-hotPink text-lg"></i>
-                    <h3 class="font-black text-white text-base tracking-wider uppercase font-mono">GROUP CHAT FLEX PREVIEW</h3>
-                </div>
-                <button onclick="closeFlexModal()" class="w-8 h-8 rounded-full bg-zinc-900 hover:bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <!-- Mock iPhone SMS Container -->
-            <div class="my-6 bg-zinc-900/60 p-4 rounded-2xl border border-white/10">
-                <div class="text-center text-[10px] font-mono text-zinc-500 mb-4">Today 9:41 AM</div>
-                <div class="flex flex-col space-y-3">
-                    <div class="self-start bg-zinc-800 text-zinc-300 text-xs px-3.5 py-2.5 rounded-2xl max-w-[80%] rounded-bl-sm font-sans">
-                        Yo where you at? Everyone is waiting.
-                    </div>
-                    <div id="flexMessageBubble" class="self-end bg-gradient-to-r from-hotPink to-neonViolet text-white text-xs px-4 py-3 rounded-2xl max-w-[85%] rounded-br-sm font-sans shadow-lg">
-                        <!-- Dynamic Excuse -->
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="copyExcuse()" class="w-full py-3 rounded-xl bg-neonCyan hover:bg-neonCyan/90 text-zinc-950 font-black text-xs font-mono uppercase tracking-widest transition shadow-lg">
-                COPY FOR CHAT 💅
-            </button>
-        </div>
+    <div class="modal-backdrop" id="flexModal" hidden>
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="flexTitle">
+            <div class="modal-header"><h2 id="flexTitle">Ready to send</h2><button class="modal-close" type="button" onclick="closeFlexModal()">Close</button></div>
+            <div class="modal-list"><div class="vault-entry"><p id="flexMessageBubble"></p></div></div>
+            <div class="modal-footer"><span></span><button class="modal-close" type="button" onclick="copyExcuse()">Copy message</button></div>
+        </section>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-        <i class="fa-solid fa-circle-check text-neonCyan text-lg"></i>
-        <span id="toastText" class="text-xs font-mono font-bold tracking-wide">Copied to clipboard! 💅</span>
-    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    {% include "myapp/chat_widget.html" %}
 
-    <!-- JavaScript Application Logic -->
     <script>
-        // State management
-        let currentLevel = 'master';
+        const levels = ['okish', 'fine', 'master'];
+        let currentLevel = 'fine';
         let currentExcuseText = '';
-        let excuseVault = JSON.parse(localStorage.getItem('sicko_excuse_vault') || '[]');
+        let excuseVault = [];
+        try {
+            const savedVault = JSON.parse(localStorage.getItem('sicko_excuse_vault') || '[]');
+            excuseVault = Array.isArray(savedVault)
+                ? savedVault.filter(item => typeof item === 'string').slice(0, 20)
+                : [];
+        } catch (error) {
+            console.warn('Saved excuse vault could not be read.', error);
+        }
 
-        // Initialize Vault Count on Load
-        document.addEventListener('DOMContentLoaded', () => {
-            updateVaultCount();
+        function selectedSituation() {
+            const selected = document.querySelector('input[name="situation"]:checked');
+            if (!selected) return '';
+            if (selected.value === 'something_else') {
+                return document.getElementById('customSituation').value.trim();
+            }
+            return selected.value;
+        }
+
+        document.querySelectorAll('input[name="situation"]').forEach(input => {
+            input.addEventListener('change', () => {
+                const otherField = document.getElementById('otherSituationField');
+                otherField.hidden = input.value !== 'something_else';
+                if (!otherField.hidden) document.getElementById('customSituation').focus();
+            });
         });
 
-        // Set Intensity Level
-        function selectLevel(level) {
+        function setLevel(level) {
             currentLevel = level;
-            document.querySelectorAll('.level-btn').forEach(btn => {
-                btn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-zinc-800 transition text-left flex flex-col justify-between";
+            document.getElementById('intensityRange').value = levels.indexOf(level);
+            document.querySelectorAll('[data-level]').forEach(button => {
+                button.setAttribute('aria-pressed', String(button.dataset.level === level));
             });
-
-            const activeBtn = document.getElementById(`btn-${level}`);
-            if (level === 'okish') {
-                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonCyan/50 ring-2 ring-neonCyan/30 transition text-left flex flex-col justify-between";
-            } else if (level === 'fine') {
-                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-hotPink/50 ring-2 ring-hotPink/30 transition text-left flex flex-col justify-between";
-            } else if (level === 'master') {
-                activeBtn.className = "level-btn group relative p-4 rounded-2xl bg-zinc-950/60 border border-neonViolet/50 ring-2 ring-neonViolet/30 transition text-left flex flex-col justify-between";
-            }
         }
 
-        // Insert Quick Preset
-        function insertPreset(text) {
-            document.getElementById('customSituation').value = text;
-        }
+        document.querySelectorAll('[data-level]').forEach(button => {
+            button.addEventListener('click', () => setLevel(button.dataset.level));
+        });
 
-        function useQuickExcuse(text) {
-            document.getElementById('customSituation').value = text;
-            generateExcuse();
-        }
+        document.getElementById('intensityRange').addEventListener('input', event => {
+            setLevel(levels[Number(event.target.value)]);
+        });
 
-        // Generate an excuse with the Django API and a local fallback.
-        async function generateExcuse() {
-            const situation = document.getElementById('customSituation').value.trim() || "Skipped obligation without warning";
-            const btn = document.getElementById('generateBtn');
-
-            // Button loading state
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-lg mr-2"></i><span>GENERATING EXCUSE...</span>`;
-
-            try {
-                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                const response = await fetch('/api/generate/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify({ situation, level: currentLevel })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Excuse API request failed: ${response.status}`);
-                }
-
-                const result = await response.json();
-                if (result.status !== 'success' || typeof result.excuse !== 'string') {
-                    throw new Error("Excuse API returned an invalid response.");
-                }
-
-                displayResult(result.excuse, "Django API");
-
-            } catch (error) {
-                console.warn("Using local fallback generator:", error);
-                const fallbackExcuse = getLocalFallback(situation, currentLevel);
-                displayResult(fallbackExcuse, "Local fallback");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-lg animate-bounce"></i><span>GENERATE EXCUSE</span>`;
-            }
-        }
-
-        // Local Fallback Alibi Engine
         function getLocalFallback(situation, level) {
-            const okishPool = [
-                `My alarm clock suffered a kernel panic right after the second snooze cycle regarding ${situation}.`,
-                `Traffic on the bridge was completely stalled due to a stray dog holding up rush hour for ${situation}.`,
-                `My Wi-Fi provider decided to execute an unscheduled firmware patch right when I needed to handle ${situation}.`
-            ];
-            const finePool = [
-                `I got unexpectedly roped into a neighborhood dispute over property lines right in the middle of ${situation}.`,
-                `My cat figured out how to lock the bedroom door from the outside, trapping me during ${situation}.`,
-                `I had to rush my roommate to urgent care because they tried to microwave metal spoons during ${situation}.`
-            ];
-            const masterPool = [
-                `A localized electromagnetic surge from a nearby amateur radio tower fried my phone's baseband processor during ${situation}.`,
-                `I was accidentally locked inside the municipal archives basement because the automated security locks triggered early regarding ${situation}.`,
-                `My smart home ecosystem registered a carbon monoxide false positive and sealed all exterior ventilation during ${situation}.`
-            ];
-
-            let pool = masterPool;
-            if (level === 'okish') pool = okishPool;
-            if (level === 'fine') pool = finePool;
-
+            const pools = {
+                okish: {
+                    late_to_class: [
+                        'My bus was running behind schedule, but I’m on my way now.',
+                        'I got held up getting out the door. I’ll be there shortly.',
+                        'The train was delayed this morning. I’m heading in now.'
+                    ],
+                    missed_deadline: [
+                        'I hit a snag while wrapping this up. Could I send it over a little later today?',
+                        'I need a little more time to finish this properly. I’ll have it to you soon.',
+                        'I’m running behind on the final pass. Would an extension until this afternoon work?'
+                    ],
+                    skipped_call: [
+                        'I missed your call earlier—sorry about that. Are you free to talk now?',
+                        'I couldn’t get to my phone in time. Just saw your call and I’m free now.',
+                        'Sorry I missed you. Send me a time that works and I’ll call back.'
+                    ],
+                    cancelled_plans: [
+                        'I’m sorry for the late notice, but I can’t make it today. Can we find another time?',
+                        'Something came up and I need to rain-check. I’d still love to catch up soon.',
+                        'I need to sit this one out tonight. Could we reschedule for another day?'
+                    ],
+                    something_else: [
+                        'I got held up unexpectedly. I’m sorting it out and will update you soon.',
+                        'Today got away from me a little. Thanks for being patient—I’ll check back in shortly.',
+                        'I ran into an unexpected snag. I’m working on it now and will keep you posted.'
+                    ]
+                },
+                fine: {
+                    late_to_class: [
+                        'The bus I was on had to stop for a mechanical check, so I’m switching routes and heading straight there.',
+                        'A signal delay backed up the whole route this morning. I’m on the next connection now.',
+                        'There was an unexpected delay on my way in. I’m moving again and will be there as soon as I can.'
+                    ],
+                    missed_deadline: [
+                        'I found an issue in the final check and need a little extra time to fix it properly. Could I send it by the end of the day?',
+                        'The last export didn’t come out right, and I’m correcting it now. Would a short extension be okay?',
+                        'I’m finishing a final pass so I can send you a clean version. I’ll get it to you later today.'
+                    ],
+                    skipped_call: [
+                        'I got pulled into something right as you called and couldn’t step away. I’m free now if you still have a minute.',
+                        'My phone was out of reach while I was dealing with something. I just saw your call—can I ring you back?',
+                        'I couldn’t get somewhere private to pick up earlier. I can talk now if that still works.'
+                    ],
+                    cancelled_plans: [
+                        'I overbooked myself and can’t give tonight the attention it deserves. Can we move this to another day?',
+                        'I need to handle something that came up today, so I have to reschedule. Let me make it up to you soon.',
+                        'I’m not going to be able to make it tonight after all. I’m sorry for the change—could we pick a new day?'
+                    ],
+                    something_else: [
+                        'An unexpected issue took longer to sort out than I planned. I’ve got it handled now and will follow up shortly.',
+                        'I had to take care of something time-sensitive. Thanks for giving me a little room to catch up.',
+                        'My schedule shifted at the last minute. I’m back on track and will keep you updated.'
+                    ]
+                },
+                master: {
+                    late_to_class: [
+                        'A vehicle issue caused a full stop on my route, so I’ve rerouted and am on my way in. I’ll catch up on anything I miss.',
+                        'The connection I was relying on got cancelled without notice. I’ve found another way across and should be there soon.',
+                        'A delay at the station threw off the whole commute. I’m on a different route now and will check in when I arrive.'
+                    ],
+                    missed_deadline: [
+                        'The final review uncovered a problem that would have affected the result. I’m correcting it now—could I send the finished version this evening?',
+                        'I had a last-minute issue with the file I was preparing, but I’m rebuilding the final copy now. I can deliver it later today.',
+                        'I’m not happy with the accuracy of the final version yet. I’m fixing the last issue and will send a complete copy as soon as it’s ready.'
+                    ],
+                    skipped_call: [
+                        'I got caught in back-to-back commitments and couldn’t step away to call. I’ve got a clear window now if you’re available.',
+                        'I had to deal with something urgent and missed the time we planned. I’m free now, or I can work around your schedule.',
+                        'I was away from my phone while I handled a time-sensitive issue. I’m back now—can we find a time to reconnect?'
+                    ],
+                    cancelled_plans: [
+                        'A time-sensitive responsibility came up and I can’t leave it unfinished tonight. I’m sorry—could I make it up to you this weekend?',
+                        'I need to stay back and resolve something that changed unexpectedly. I know this is late notice; let me plan a new time.',
+                        'My evening has shifted because I need to take care of something important. I’m sorry to change plans—can we pick another date?'
+                    ],
+                    something_else: [
+                        'A time-sensitive issue needed my attention longer than I expected. It’s being handled now, and I’ll send you a proper update shortly.',
+                        'I had to pivot to resolve something unexpected. I’ve got a plan now and will follow through as soon as I can.',
+                        'An unplanned commitment changed my timing today. I’m sorting out the next steps and will keep you in the loop.'
+                    ]
+                }
+            };
+            const category = ['late_to_class', 'missed_deadline', 'skipped_call', 'cancelled_plans'].includes(situation)
+                ? situation
+                : 'something_else';
+            const pool = pools[level][category];
             return pool[Math.floor(Math.random() * pool.length)];
         }
 
-        // Render Result to UI
+        async function generateExcuse() {
+            const situation = selectedSituation();
+            if (!situation) {
+                showToast('Add a little context for “Something else.”');
+                if (document.querySelector('input[name="situation"]:checked')?.value === 'something_else') {
+                    document.getElementById('customSituation').focus();
+                }
+                return;
+            }
+
+            const button = document.getElementById('generateBtn');
+            const output = document.getElementById('excuseOutputText');
+            const originalButton = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = 'Making it sound like you…';
+            output.classList.add('is-placeholder');
+            output.textContent = 'Putting the right words together…';
+
+            try {
+                const token = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const response = await fetch('/api/generate/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': token },
+                    body: JSON.stringify({
+                        situation,
+                        level: currentLevel,
+                        customInput: document.getElementById('customInput').value.trim()
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok || result.status !== 'success' || typeof result.excuse !== 'string') {
+                    throw new Error(result.message || 'The excuse could not be generated.');
+                }
+                displayResult(result.excuse, 'Django API');
+            } catch (error) {
+                console.warn('Excuse API unavailable; using local generator.', error);
+                displayResult(getLocalFallback(situation, currentLevel), 'Local fallback');
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalButton;
+            }
+        }
+
         function displayResult(text, source) {
             currentExcuseText = text;
-            document.getElementById('excuseOutputText').innerText = `"${text}"`;
-
-            const badge = document.getElementById('badgeLevel');
-            badge.innerText = currentLevel.toUpperCase() + " LEVEL";
-
-            const sourceBadge = document.getElementById('badgeSource');
-            sourceBadge.innerText = source;
-
-            const card = document.getElementById('resultCard');
-            card.classList.remove('hidden');
-            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const output = document.getElementById('excuseOutputText');
+            output.classList.remove('is-placeholder');
+            output.textContent = text;
+            document.getElementById('previewCaption').textContent = 'Here’s a message you can use.';
+            document.getElementById('badgeLevel').textContent = currentLevel.toUpperCase() + ' LEVEL';
+            document.getElementById('badgeSource').textContent = source;
         }
 
-        // Copy to Clipboard (using fallback execCommand for iFrame compatibility)
-        function copyExcuse() {
-            const textarea = document.createElement("textarea");
-            textarea.value = currentExcuseText;
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showToast("Copied to clipboard! 💅");
-            } catch (err) {
-                showToast("Failed to copy!", true);
-            }
-            document.body.removeChild(textarea);
-        }
-
-        // Toast Notification System
-        function showToast(message, isError = false) {
+        function showToast(message) {
             const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toastText');
-            toastText.innerText = message;
-
-            if (isError) {
-                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-rose-500/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-0 opacity-100 transition-all duration-300 z-50";
-            } else {
-                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-0 opacity-100 transition-all duration-300 z-50";
-            }
-
-            setTimeout(() => {
-                toast.className = "fixed bottom-6 right-6 bg-zinc-900 border border-neonCyan/50 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50";
-            }, 3000);
+            toast.textContent = message;
+            toast.hidden = false;
+            window.clearTimeout(showToast.timeoutId);
+            showToast.timeoutId = window.setTimeout(() => { toast.hidden = true; }, 2800);
         }
 
-        // Vault Management
-        function saveToVault() {
-            if (!currentExcuseText) return;
-            if (!excuseVault.includes(currentExcuseText)) {
-                excuseVault.unshift(currentExcuseText);
-                if (excuseVault.length > 20) excuseVault.pop(); // keep max 20
-                localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));
-                updateVaultCount();
-                showToast("Saved to your Excuse Vault! 👑");
-            } else {
-                showToast("Already saved in vault!");
+        async function copyExcuse() {
+            if (!currentExcuseText) {
+                showToast('Generate an excuse first.');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(currentExcuseText);
+                showToast('Copied to clipboard.');
+            } catch (error) {
+                const textarea = document.createElement('textarea');
+                textarea.value = currentExcuseText;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                const copied = document.execCommand('copy');
+                textarea.remove();
+                showToast(copied ? 'Copied to clipboard.' : 'Could not copy this excuse.');
             }
         }
 
         function updateVaultCount() {
-            document.getElementById('vaultCount').innerText = excuseVault.length;
+            document.getElementById('vaultCount').textContent = excuseVault.length;
+        }
+
+        function persistVault() {
+            try {
+                localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));
+            } catch (error) {
+                showToast('Your browser could not save the vault.');
+                console.error('Excuse vault could not be saved.', error);
+                return false;
+            }
+            updateVaultCount();
+            return true;
+        }
+
+        function saveToVault() {
+            if (!currentExcuseText) {
+                showToast('Generate an excuse first.');
+                return;
+            }
+            if (excuseVault.includes(currentExcuseText)) {
+                showToast('That excuse is already in your vault.');
+                return;
+            }
+            excuseVault.unshift(currentExcuseText);
+            excuseVault = excuseVault.slice(0, 20);
+            if (persistVault()) showToast('Saved to your vault.');
         }
 
         function openVaultModal() {
-            const listContainer = document.getElementById('vaultList');
-            listContainer.innerHTML = '';
-
-            if (excuseVault.length === 0) {
-                listContainer.innerHTML = `<div class="text-center py-8 text-zinc-500 font-mono text-xs">Your vault is currently empty. Save some master alibis!</div>`;
-            } else {
-                excuseVault.forEach((excuse, index) => {
-                    const item = document.createElement('div');
-                    item.className = "p-3 rounded-2xl bg-zinc-900/80 border border-white/5 flex items-center justify-between space-x-3";
-                    const excuseText = document.createElement('p');
-                    excuseText.className = "text-xs text-zinc-300 font-sans line-clamp-2";
-                    excuseText.textContent = `"${excuse}"`;
-
-                    const actions = document.createElement('div');
-                    actions.className = "flex items-center space-x-2 flex-shrink-0";
-
-                    const copyButton = document.createElement('button');
-                    copyButton.className = "p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs transition";
-                    copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
-                    copyButton.addEventListener('click', async () => {
-                        try {
-                            await navigator.clipboard.writeText(excuse);
-                            showToast("Copied from vault!");
-                        } catch (error) {
-                            showToast("Failed to copy from vault.", true);
-                        }
-                    });
-
-                    const deleteButton = document.createElement('button');
-                    deleteButton.className = "p-2 rounded-xl bg-zinc-800 hover:bg-rose-900/50 text-zinc-400 hover:text-rose-400 text-xs transition";
-                    deleteButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-                    deleteButton.addEventListener('click', () => deleteFromVault(index));
-
-                    actions.append(copyButton, deleteButton);
-                    item.append(excuseText, actions);
-                    listContainer.appendChild(item);
-                });
+            const list = document.getElementById('vaultList');
+            list.replaceChildren();
+            if (!excuseVault.length) {
+                const empty = document.createElement('p');
+                empty.className = 'field-hint';
+                empty.textContent = 'Your vault is empty. Save an excuse you like and it will be available here.';
+                list.appendChild(empty);
             }
-
-            document.getElementById('vaultModal').classList.remove('hidden');
+            excuseVault.forEach((excuse, index) => {
+                const entry = document.createElement('div');
+                entry.className = 'vault-entry';
+                const text = document.createElement('p');
+                text.textContent = excuse;
+                const actions = document.createElement('div');
+                actions.style.display = 'flex';
+                actions.style.gap = '6px';
+                const useButton = document.createElement('button');
+                useButton.type = 'button';
+                useButton.textContent = 'Use';
+                useButton.addEventListener('click', () => {
+                    displayResult(excuse, 'Your vault');
+                    closeVaultModal();
+                });
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', () => deleteFromVault(index));
+                actions.append(useButton, deleteButton);
+                entry.append(text, actions);
+                list.appendChild(entry);
+            });
+            document.getElementById('vaultModal').hidden = false;
         }
 
         function closeVaultModal() {
-            document.getElementById('vaultModal').classList.add('hidden');
+            document.getElementById('vaultModal').hidden = true;
+        }
+
+        function useVaultExcuse() {
+            if (!excuseVault.length) {
+                showToast('Your vault is empty. Save an excuse to use it here.');
+                return;
+            }
+            openVaultModal();
         }
 
         function deleteFromVault(index) {
             excuseVault.splice(index, 1);
-            localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));
-            updateVaultCount();
-            openVaultModal();
-            showToast("Excuse removed from vault.");
+            if (persistVault()) openVaultModal();
         }
 
         function clearVault() {
             excuseVault = [];
-            localStorage.setItem('sicko_excuse_vault', JSON.stringify(excuseVault));
-            updateVaultCount();
-            openVaultModal();
-            showToast("Vault cleared.");
+            if (persistVault()) openVaultModal();
         }
 
-        // Flex Mock SMS Modal
         function openFlexModal() {
-            if (!currentExcuseText) return;
-            document.getElementById('flexMessageBubble').innerText = currentExcuseText;
-            document.getElementById('flexModal').classList.remove('hidden');
+            if (!currentExcuseText) {
+                showToast('Generate an excuse first.');
+                return;
+            }
+            document.getElementById('flexMessageBubble').textContent = currentExcuseText;
+            document.getElementById('flexModal').hidden = false;
         }
 
         function closeFlexModal() {
-            document.getElementById('flexModal').classList.add('hidden');
+            document.getElementById('flexModal').hidden = true;
         }
 
-        document.getElementById('inspirationButton').addEventListener('click', async () => {
-            const button = document.getElementById('inspirationButton');
+        document.getElementById('inspirationButton').addEventListener('click', async event => {
+            const button = event.currentTarget;
             const text = document.getElementById('inspirationText');
             const source = document.getElementById('inspirationSource');
             button.disabled = true;
-            text.innerText = 'Finding inspiration...';
+            text.textContent = 'Finding inspiration…';
             try {
                 const response = await fetch('/api/inspiration/');
                 if (!response.ok) throw new Error(`Inspiration request failed: ${response.status}`);
                 const result = await response.json();
-                text.innerText = result.text;
-                source.innerText = `Source: ${result.source}`;
+                text.textContent = result.text;
+                source.textContent = `Source: ${result.source}`;
             } catch (error) {
-                text.innerText = 'Inspiration is unavailable right now. Try again shortly.';
-                source.innerText = '';
+                text.textContent = 'Inspiration is unavailable right now. Try again shortly.';
+                source.textContent = '';
+                console.warn('Could not load excuse inspiration.', error);
             } finally {
                 button.disabled = false;
             }
         });
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                closeVaultModal();
+                closeFlexModal();
+            }
+        });
+
+        updateVaultCount();
     </script>
-    {% include "myapp/chat_widget.html" %}
 </body>
 </html>

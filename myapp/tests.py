@@ -178,12 +178,42 @@ class AssistantApiTests(TestCase):
     def test_excuse_generator_uses_existing_api(self):
         response = self.client.post(
             "/api/generate/",
-            data=json.dumps({"situation": "a lecture", "level": "okish"}),
+            data=json.dumps({
+                "situation": "I do not want to go to class today",
+                "level": "okish",
+                "customInput": "I woke up late and missed the bus",
+            }),
             content_type="application/json",
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "success")
-        self.assertIn("a lecture", response.json()["excuse"])
+        self.assertNotIn("context:", response.json()["excuse"].lower())
+
+    def test_situation_and_private_notes_never_appear_in_generated_excuse(self):
+        private_reason = "I do not want to go to class today"
+        private_detail = "I woke up late and missed the bus"
+        for situation in (
+            "late_to_class",
+            "missed_deadline",
+            "skipped_call",
+            "cancelled_plans",
+            private_reason,
+        ):
+            with self.subTest(situation=situation):
+                response = self.client.post(
+                    "/api/generate/",
+                    data=json.dumps({
+                        "situation": situation,
+                        "level": "fine",
+                        "customInput": private_detail,
+                    }),
+                    content_type="application/json",
+                )
+                self.assertEqual(response.status_code, 200)
+                excuse = response.json()["excuse"].lower()
+                self.assertNotIn(private_reason.lower(), excuse)
+                self.assertNotIn(private_detail.lower(), excuse)
+                self.assertNotIn("context:", excuse)
 
     def test_excuse_generator_rejects_invalid_level(self):
         response = self.client.post(

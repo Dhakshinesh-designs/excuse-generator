@@ -11,6 +11,7 @@
 ## Features
 
 - Responsive excuse generator, FAQ, error-code guide, and About pages.
+- The generator's situation and optional private note are never echoed into its excuse text.
 - Shared assistant chat widget on every page, including custom 404 and 500 pages.
 - Ten FAQs, eight required HTTP error explanations, and one site-specific error code seeded into SQL.
 - Support tickets stored in the SQL database and manageable in Django admin.
