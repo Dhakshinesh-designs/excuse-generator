@@ -36,7 +36,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-The local website is available at `http://127.0.0.1:8000/`. SQLite is used when `DATABASE_URL` is empty. The generator and FAQ assistant work without Gemini or MongoDB. MongoDB-backed profiles, chat logs, and feedback require `MONGODB_URI`; Gemini-generated grounded answers require `GEMINI_API_KEY`. The local `.env` file is ignored by Git.
+The local website is available at `http://127.0.0.1:8000/` and uses SQLite. The generator and FAQ assistant work without Gemini or MongoDB. MongoDB-backed profiles, chat logs, and feedback require `MONGODB_URI`; Gemini-generated grounded answers require `GEMINI_API_KEY`. The local `.env` file is ignored by Git.
 
 ## Get API credentials
 
@@ -58,9 +58,10 @@ The app stores user profile documents in `user_profiles`, chat exchanges in `cha
 2. Create an API key and copy it once.
 3. Set `GEMINI_API_KEY` in `.env` locally and in the host's environment settings. The key is sent only in server-to-server requests. Without it, the SQL FAQ/error matcher continues to work.
 
-### SQL database and Django settings
+### Django settings
 
-- For durable hosted FAQ and support-ticket data, connect PostgreSQL and set `DATABASE_URL` to its private connection URL. Locally, leave it empty to use SQLite.
+- SQLite is used for Django accounts, FAQs, error codes, sessions, and support tickets. No SQL database URL or SQL provider configuration is required.
+- On Vercel, SQLite lives in the function instance's temporary `/tmp` directory. Data can disappear on a cold start or redeploy, and separate function instances do not share a database. Do not rely on Vercel SQLite for durable or consistent user accounts, tickets, or other important data.
 - Set a unique random `DJANGO_SECRET_KEY` for production; do not reuse the example value.
 - Set `DJANGO_ALLOWED_HOSTS` to `.vercel.app` (or your exact host names), with no URL scheme.
 - Set `DJANGO_CSRF_TRUSTED_ORIGINS` to the exact HTTPS origin, for example `https://excuse-generator-murex-eight.vercel.app`.
@@ -78,7 +79,6 @@ The app stores user profile documents in `user_profiles`, chat exchanges in `cha
 | `DJANGO_SECURE_HSTS_SECONDS` | Enable HSTS only after HTTPS is confirmed working for the production domain. |
 | `DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS` | Include subdomains in HSTS only when each subdomain supports HTTPS. |
 | `DJANGO_SECURE_HSTS_PRELOAD` | Enable HSTS preload only after reviewing the permanent browser preload requirements. |
-| `DATABASE_URL` | PostgreSQL URL; leave empty to use SQLite locally. |
 | `GEMINI_API_KEY` | Optional server-side key for FAQ-grounded Gemini answers. |
 | `MONGODB_URI` | MongoDB connection URL for chat logs and feedback. |
 | `MONGODB_DATABASE` | MongoDB database name. |
@@ -104,9 +104,9 @@ Custom 404/500 templates are enabled when `DJANGO_DEBUG=False`. To verify the 40
 ### Vercel
 
 1. Import `https://github.com/Dhakshinesh-designs/excuse-generator` into Vercel. Vercel detects Django from `manage.py` and uses `myproject.wsgi:application`. Vercel uses `uv` for Python dependency installation and supports this project's `requirements.txt`; a `uv.lock` or `pyproject.toml` is not required.
-2. Connect a persistent PostgreSQL integration and set `DATABASE_URL`. Vercel functions do not provide persistent local-disk storage, so SQLite is not suitable for production.
+2. No SQL database integration or `DATABASE_URL` is needed. Vercel instances use a temporary SQLite database under `/tmp`; Django applies migrations when each instance starts. The SQLite database is not persistent or shared, so user accounts and tickets can disappear or differ between instances.
 3. Configure `DJANGO_SECRET_KEY`, `DJANGO_DEBUG=False`, `DJANGO_ALLOWED_HOSTS=.vercel.app`, `DJANGO_SECURE_SSL_REDIRECT=True`, and `DJANGO_CSRF_TRUSTED_ORIGINS=https://excuse-generator-murex-eight.vercel.app` in Vercel's environment settings.
 4. Configure MongoDB Atlas and set `MONGODB_URI` and `MONGODB_DATABASE`; set `GEMINI_API_KEY` to enable generated responses. Never commit secrets.
-5. Redeploy after changing environment variables. Run `python manage.py migrate` against the hosted PostgreSQL database to create tables and seed the FAQ/error catalog. Vercel automatically collects and serves static files from `STATIC_ROOT`.
+5. Redeploy after changing environment variables. Vercel automatically collects and serves static files from `STATIC_ROOT`.
 6. Check `/health/`, register and sign in, test profile CRUD with MongoDB configured, try the assistant, verify a narrow mobile viewport, and request a random nonexistent URL to confirm the custom 404. Set HSTS only after HTTPS is confirmed.
 7. Enter the task title, HTTPS URL, and GitHub URL in the assessment spreadsheet.

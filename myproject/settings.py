@@ -1,6 +1,6 @@
 import os
+import tempfile
 from pathlib import Path
-from urllib.parse import unquote, urlparse
 
 from dotenv import load_dotenv
 
@@ -62,29 +62,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "myproject.wsgi.application"
 
-database_url = os.environ.get("DATABASE_URL", "")
-if database_url:
-    parsed_database_url = urlparse(database_url)
-    if parsed_database_url.scheme not in {"postgres", "postgresql"}:
-        raise ValueError("DATABASE_URL must use the postgres or postgresql scheme.")
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": unquote(parsed_database_url.path.lstrip("/")),
-            "USER": unquote(parsed_database_url.username or ""),
-            "PASSWORD": unquote(parsed_database_url.password or ""),
-            "HOST": parsed_database_url.hostname or "",
-            "PORT": parsed_database_url.port or 5432,
-            "OPTIONS": {"sslmode": "require"},
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": (
+            Path(tempfile.gettempdir()) / "excuse-generator.sqlite3"
+            if os.environ.get("VERCEL") == "1"
+            else BASE_DIR / "db.sqlite3"
+        ),
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
