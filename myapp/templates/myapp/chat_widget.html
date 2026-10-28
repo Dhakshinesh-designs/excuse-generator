@@ -1,3 +1,10 @@
+<style>
+    @media (max-width: 640px) {
+        #assistantToggle { width: 3.25rem; height: 3.25rem; justify-content: center; padding: 0; }
+        #assistantToggle span { display: none; }
+        #assistantPanel { max-height: calc(100dvh - 6rem); }
+    }
+</style>
 <section class="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3" aria-label="Support assistant">
     <div id="assistantPanel" class="hidden w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-violet-400/40 bg-zinc-950 shadow-2xl shadow-violet-950/40">
         <div class="flex items-center justify-between border-b border-white/10 px-4 py-3">
@@ -16,7 +23,7 @@
             <button class="focus-ring rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-500" type="submit">Send</button>
         </form>
     </div>
-    <button id="assistantToggle" class="focus-ring flex items-center gap-2 rounded-full bg-violet-600 px-5 py-3 font-bold text-white shadow-lg shadow-violet-950/50 hover:bg-violet-500" type="button" onclick="toggleAssistant()" aria-expanded="false">
+    <button id="assistantToggle" class="focus-ring flex items-center gap-2 rounded-full bg-violet-600 px-5 py-3 font-bold text-white shadow-lg shadow-violet-950/50 hover:bg-violet-500" type="button" onclick="toggleAssistant()" aria-label="Ask the assistant" aria-expanded="false">
         <i class="fa-solid fa-message" aria-hidden="true"></i><span>Ask assistant</span>
     </button>
 </section>

@@ -3,28 +3,106 @@ import logging
 import random
 import uuid
 
+from django.contrib import messages
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.db import DatabaseError, connection
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_GET, require_POST
 from pymongo.errors import PyMongoError
 
+from .forms import ProfileForm, RegistrationForm
 from .models import ErrorCode, FAQ, SupportTicket
 from .services import (
     answer_from_database,
     answer_with_gemini,
+    create_user_profile,
+    delete_user_profile,
     get_excuse_inspiration,
+    get_user_profile,
     mongo_health,
     store_chat_exchange,
     store_feedback,
+    update_user_profile,
 )
 
 logger = logging.getLogger(__name__)
 
 
 def index(request):
-    return render(request, "myapp/index.html")
+    return render(request, "myapp/index.html", {"faqs": FAQ.objects.all()})
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect("profile")
+    form = RegistrationForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save()
+        login(request, user)
+        messages.success(request, "Your account is ready.")
+        return redirect("profile")
+    return render(request, "myapp/register.html", {"form": form})
+
+
+@login_required
+def profile(request):
+    profile_data = None
+    storage_error = False
+    if request.method == "POST" and request.POST.get("action") == "delete":
+        try:
+            deleted = delete_user_profile(request.user.pk)
+        except (PyMongoError, RuntimeError):
+            logger.exception("MongoDB profile deletion failed for user %s.", request.user.pk)
+            storage_error = True
+        else:
+            messages.success(
+                request,
+                "Your MongoDB profile was deleted."
+                if deleted
+                else "There was no MongoDB profile to delete.",
+            )
+            return redirect("profile")
+    elif request.method == "POST":
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            try:
+                profile_data = get_user_profile(request.user.pk)
+                if profile_data is None:
+                    create_user_profile(request.user.pk, form.cleaned_data)
+                    messages.success(request, "Your MongoDB profile was created.")
+                else:
+                    updated = update_user_profile(request.user.pk, form.cleaned_data)
+                    if not updated:
+                        create_user_profile(request.user.pk, form.cleaned_data)
+                    messages.success(request, "Your MongoDB profile was updated.")
+                return redirect("profile")
+            except (PyMongoError, RuntimeError):
+                logger.exception("MongoDB profile save failed for user %s.", request.user.pk)
+                storage_error = True
+        profile_data = form.cleaned_data if form.is_valid() else None
+    else:
+        try:
+            profile_data = get_user_profile(request.user.pk)
+        except (PyMongoError, RuntimeError):
+            logger.exception("MongoDB profile read failed for user %s.", request.user.pk)
+            storage_error = True
+
+    form = ProfileForm(initial=profile_data or {"display_name": request.user.username})
+    if request.method == "POST" and request.POST.get("action") != "delete":
+        form = ProfileForm(request.POST)
+    return render(
+        request,
+        "myapp/profile.html",
+        {
+            "form": form,
+            "profile_exists": profile_data is not None,
+            "storage_error": storage_error,
+        },
+        status=503 if storage_error else 200,
+    )
 
 
 def faq_page(request):
@@ -225,7 +303,10 @@ def assistant_chat(request):
 
     ticket = None
     if answer is None:
-        ticket = SupportTicket.objects.create(question=question)
+        ticket = SupportTicket.objects.create(
+            question=question,
+            user=request.user if request.user.is_authenticated else None,
+        )
         answer = (
             "I couldn't find that in the FAQ or error-code guide, so I opened a "
             f"support ticket for follow-up. Your ticket number is {ticket.reference}."

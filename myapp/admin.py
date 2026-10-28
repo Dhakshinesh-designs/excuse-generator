@@ -19,7 +19,7 @@ class ErrorCodeAdmin(admin.ModelAdmin):
 
 @admin.register(SupportTicket)
 class SupportTicketAdmin(admin.ModelAdmin):
-    list_display = ("reference", "status", "created_at")
+    list_display = ("reference", "user", "status", "created_at")
     list_filter = ("status", "created_at")
-    search_fields = ("reference", "question")
+    search_fields = ("reference", "question", "user__username")
     readonly_fields = ("reference", "created_at")

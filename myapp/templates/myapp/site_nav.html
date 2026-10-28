@@ -10,5 +10,14 @@
             <a class="focus-ring rounded-full border border-transparent px-3 py-2 text-zinc-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white {% if request.resolver_match.url_name == 'errors' %}border-orange-400/20 bg-orange-400/10 text-orange-200{% endif %}" href="{% url 'errors' %}" {% if request.resolver_match.url_name == 'errors' %}aria-current="page"{% endif %}>Error codes</a>
             <a class="focus-ring rounded-full border border-transparent px-3 py-2 text-zinc-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white {% if request.resolver_match.url_name == 'about' %}border-orange-400/20 bg-orange-400/10 text-orange-200{% endif %}" href="{% url 'about' %}" {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>
         </div>
+        <div class="flex items-center gap-2 text-sm">
+            {% if user.is_authenticated %}
+            <a class="focus-ring rounded-full border border-white/10 px-3 py-2 text-zinc-200 hover:bg-white/5" href="{% url 'profile' %}">Profile</a>
+            <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="focus-ring rounded-full border border-white/10 px-3 py-2 text-zinc-300 hover:bg-white/5" type="submit">Log out</button></form>
+            {% else %}
+            <a class="focus-ring rounded-full px-3 py-2 text-zinc-300 hover:text-white" href="{% url 'login' %}">Log in</a>
+            <a class="focus-ring rounded-full border border-orange-400/30 bg-orange-400/10 px-3 py-2 text-orange-200" href="{% url 'register' %}">Sign up</a>
+            {% endif %}
+        </div>
     </nav>
 </header>

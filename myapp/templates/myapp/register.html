@@ -1,0 +1,23 @@
+{% extends "myapp/site_base.html" %}
+{% block title %}Create account | Sicko-Excuse{% endblock %}
+{% block content %}
+<section class="content-panel mx-auto max-w-xl p-6 sm:p-9">
+    <p class="page-eyebrow">Your account</p>
+    <h1 class="page-title text-4xl sm:text-5xl">Create an account</h1>
+    <p class="page-description mx-0 text-left">Create a secure sign-in to manage your MongoDB profile. Support tickets you open can be associated with your account. Your password is stored using Django's password hashing in SQL, never in MongoDB.</p>
+    <form method="post" class="mt-7 space-y-5">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="rounded-xl border border-red-400/30 bg-red-950/30 p-3 text-sm text-red-200">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+        <div>
+            <label class="mb-1 block text-sm font-bold text-zinc-200" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="mt-1 text-xs leading-relaxed text-zinc-500">{{ field.help_text|safe }}</div>{% endif %}
+            {% for error in field.errors %}<p class="mt-1 text-sm text-red-300">{{ error }}</p>{% endfor %}
+        </div>
+        {% endfor %}
+        <button class="focus-ring w-full rounded-xl bg-orange-500 px-5 py-3 font-bold text-zinc-950 hover:bg-orange-400" type="submit">Create account</button>
+    </form>
+    <p class="mt-5 text-sm text-zinc-400">Already registered? <a class="text-orange-200 underline" href="{% url 'login' %}">Log in</a>.</p>
+</section>
+{% endblock %}

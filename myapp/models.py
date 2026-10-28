@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 
 
@@ -40,6 +41,13 @@ class SupportTicket(models.Model):
 
     reference = models.CharField(max_length=12, unique=True, editable=False)
     question = models.TextField(max_length=2000)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="support_tickets",
+    )
     status = models.CharField(
         max_length=16, choices=Status.choices, default=Status.OPEN
     )

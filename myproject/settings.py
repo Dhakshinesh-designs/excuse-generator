@@ -5,7 +5,6 @@ from urllib.parse import unquote, urlparse
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / ".env.local")
 load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.environ.get(
@@ -119,6 +118,8 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LOGIN_REDIRECT_URL = "profile"
+LOGOUT_REDIRECT_URL = "index"
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 MONGODB_URI = os.environ.get("MONGODB_URI", "")

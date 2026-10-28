@@ -19,6 +19,7 @@ STOP_WORDS = {
 }
 
 _mongo_client = None
+_mongo_profile_index_ready = False
 
 
 def _tokens(text):
@@ -66,6 +67,57 @@ def store_feedback(conversation_id, helpful, comment):
     })
 
 
+def _user_profile_collection():
+    global _mongo_profile_index_ready
+    collection = _mongo_collection("user_profiles")
+    if collection is None:
+        raise RuntimeError("MongoDB is not configured.")
+    if not _mongo_profile_index_ready:
+        collection.create_index("django_user_id", unique=True)
+        _mongo_profile_index_ready = True
+    return collection
+
+
+def get_user_profile(user_id):
+    profile = _user_profile_collection().find_one(
+        {"django_user_id": str(user_id)},
+        {"_id": False},
+    )
+    return profile
+
+
+def create_user_profile(user_id, profile_data):
+    document = {
+        "django_user_id": str(user_id),
+        "display_name": profile_data["display_name"],
+        "email": profile_data["email"],
+        "bio": profile_data["bio"],
+    }
+    _user_profile_collection().insert_one(document)
+    return document
+
+
+def update_user_profile(user_id, profile_data):
+    result = _user_profile_collection().update_one(
+        {"django_user_id": str(user_id)},
+        {
+            "$set": {
+                "display_name": profile_data["display_name"],
+                "email": profile_data["email"],
+                "bio": profile_data["bio"],
+            }
+        },
+    )
+    return result.modified_count > 0 or result.matched_count > 0
+
+
+def delete_user_profile(user_id):
+    result = _user_profile_collection().delete_one(
+        {"django_user_id": str(user_id)}
+    )
+    return result.deleted_count > 0
+
+
 def mongo_health():
     try:
         collection = _mongo_collection("health_checks")
@@ -106,7 +158,7 @@ def answer_from_database(question):
         if score > best_score:
             best_faq, best_score, best_matches = faq, score, matches
 
-    if best_faq and (best_matches >= 2 or best_score >= 5):
+    if best_faq and best_matches >= 2:
         return best_faq.answer
     return None
 
